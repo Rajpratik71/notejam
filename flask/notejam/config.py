@@ -12,6 +12,12 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'pymysql://%s:%s@%s:%s/%s' % (
+            os.getenv('MYSQL_USER', 'notejam'),
+            os.getenv('MYSQL_PWD', ''),
+            os.getenv('MYSQL_SERVICE_HOST', 'mysql'),
+            os.getenv('MYSQL_SERVICE_PORT_MYSQL', '3306'),
+            os.getenv('MYSQL_DB', 'notejam'))
 
 
 class DevelopmentConfig(Config):
