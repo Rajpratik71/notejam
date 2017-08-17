@@ -1,0 +1,48 @@
+#!/usr/bin/env groovy
+
+podTemplate(
+  label: 'notejam',
+    containers: [
+        containerTemplate(name: 'jnlp', image: 'gcr.io/shining-grid-739/jenkins-slave:lts', args: '${computer.jnlpmac} ${computer.name}'),
+    ],
+    volumes: [
+        hostPathVolume(hostPath: '/usr/bin/docker', mountPath: '/usr/bin/docker'),
+        hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
+        hostPathVolume(hostPath: '/run/secrets/kubernetes.io/serviceaccount', mountPath: '/run/secrets/kubernetes.io/serviceaccount')
+    ],
+    serviceAccount: "jenkins-master"
+) {
+
+node("notejam") {
+  def branch = "${env.BRANCH_NAME}"
+  def imageTag = "gcr.io/shining-grid-739/notejam:${branch}.${env.BUILD_NUMBER}"
+  
+  git branch: "${branch}", url: 'https://github.com/lenartj/notejam.git'
+
+  stage("Build image") {
+    sh "docker build -t ${imageTag} flask/"
+  }
+
+  stage("Run tests") {
+    sh("docker run --rm ${imageTag} python tests.py")
+  }
+
+  stage("Push image to registry") {
+    sh "gcloud docker -- push ${imageTag}"
+  }
+
+  stage("Deploy") {
+    switch (branch) {
+      case "master":
+        sh "kubectl set image deployment/notejam notejam=${imageTag}"
+        sh "kubectl rollout status deployment/notejam"
+        break
+
+      default:
+        echo "Deployment is not configured for branch '${branch}'"
+    }
+  }
+
+} // node
+
+} // podTemplate
