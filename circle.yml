@@ -30,6 +30,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt-get install -y groff
             virtualenv venv
             . venv/bin/activate
             pip install -r django/requirements.txt
@@ -46,6 +47,11 @@ jobs:
             . venv/bin/activate
             python django/notejam/manage.py test
 
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
+      - deploy:
+          name: deploy to aws
+          command: |
+            . venv/bin/activate
+
+#      - store_artifacts:
+#          path: test-reports
+#          destination: test-reports
