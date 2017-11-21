@@ -51,6 +51,7 @@ jobs:
           name: deploy to aws
           command: |
             . venv/bin/activate
+            django/opsworks-deploy us-east-1 $DEPLOY_STACK_ID $DEPLOY_APPLICATION_ID
 
 #      - store_artifacts:
 #          path: test-reports
