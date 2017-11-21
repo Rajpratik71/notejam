@@ -30,7 +30,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            virtualenv env
+            virtualenv venv
             . venv/bin/activate
             pip install -r django/requirements.txt
 
