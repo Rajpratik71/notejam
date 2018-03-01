@@ -8,3 +8,5 @@ variable "db_password" {}
 variable "db_subnet_id_1" {}
 variable "db_subnet_id_2" {}
 variable "db_subnet_id_3" {}
+variable "db_port" {}
+variable "GITHUB_TOKEN" {}

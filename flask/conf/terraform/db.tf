@@ -18,7 +18,9 @@ resource "aws_db_instance" "default" {
   password             = "${var.db_password}"
   db_subnet_group_name = "main"
   parameter_group_name = "default.mysql5.6"
-  storage_encrypted = true
-  multi_az = true
+  publicly_accessible  = true
+  storage_encrypted    = true
+  multi_az             = true
   backup_retention_period = 7
+  depends_on           = ["aws_db_subnet_group.default"]
 }
