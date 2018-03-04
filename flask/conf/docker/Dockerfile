@@ -7,25 +7,22 @@
 # Pull base image.
 FROM ubuntu:14.04
 
-#Install.
- RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  apt-get install -y python-pip && \
-  pip install virtualenv && \
-  pip install pymysql && \
-  apt-get install -y git && \
-  rm -rf /var/lib/apt/lists/*
+# Environment variables will be set by parameter store
 
-# Set environment variables.
-ENV HOME /root
+#Install.
+RUN apt-get update
+RUN apt-get install -y build-essential
+RUN apt-get install -y python-pip
+RUN pip install virtualenv
+RUN pip install pymysql
+RUN apt-get install -y git
+RUN git clone https://github.com/therenegadeoffunk/notejam
 
 # Define working directory.
-WORKDIR /root
+WORKDIR /notejam/flask
+RUN pip install -r requirements.txt
+RUN python db.py
 
+EXPOSE 5000
 # Define default command.
-CMD ["bash"]
+CMD ["python", "runserver.py"]
