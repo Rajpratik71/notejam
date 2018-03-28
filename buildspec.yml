@@ -5,6 +5,6 @@ phases:
     commands:
       - cd laravel/notejam
       - touch app/database/notejam.db
-      - php artisan migrate
       - composer install --no-interaction --prefer-dist
+      - php artisan migrate
       - ./vendor/bin/phpunit --verbose
