@@ -4,7 +4,7 @@ phases:
   build:
     commands:
       - cd laravel/notejam
-      - touch app/database/notejam.db
       - composer install --no-interaction --prefer-dist
+      - touch app/database/notejam.db
       - php artisan migrate
       - ./vendor/bin/phpunit --verbose
