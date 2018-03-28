@@ -11,4 +11,9 @@ phases:
 artifacts:
   base-directory: laravel/notejam
   files:
-    - '**/*'
+    - bootstrap/**/*
+    - public/**/*
+    - app/**/*
+    - .ebextensions/**/*
+    - *.*
+    - .*
