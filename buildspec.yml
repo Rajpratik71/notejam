@@ -8,3 +8,8 @@ phases:
       - touch app/database/notejam.db
       - php artisan migrate
       - ./vendor/bin/phpunit --verbose
+artifacts:
+  base-directory: laravel/notejam
+  discard-paths: yes
+  files:
+    - '**/*'
