@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => isset($_SERVER['AWS_ENV']) && ($_SERVER['AWS_ENV'] == 'production') ? 'mysql' : 'sqlite',
 
 	/*
 	|--------------------------------------------------------------------------

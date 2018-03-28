@@ -1,0 +1,10 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - cd laravel/notejam
+      - touch app/database/notejam.db
+      - php artisan migrate
+      - composer install --no-interaction --prefer-dist
+      - ./vendor/bin/phpunit --verbose
