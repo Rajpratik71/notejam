@@ -15,5 +15,6 @@ artifacts:
     - 'public/**/*'
     - 'app/**/*'
     - '.ebextensions/**/*'
+    - 'artisan'
     - '*.*'
     - '.*'
