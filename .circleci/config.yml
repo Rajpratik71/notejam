@@ -33,6 +33,12 @@ jobs:
             sudo pip install --upgrade pip setuptools
             sudo pip install -r flask/requirements.txt
 
+      - run:
+          name: generate deployment package
+          command: |
+            tar czfv notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
+
+
       - save_cache:
           paths:
             - ./venv
@@ -45,5 +51,5 @@ jobs:
             python flask/tests.py
 
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
+          path: notejam-flask.tgz
+          destination: notejam-flask.tgz
