@@ -265,3 +265,14 @@ def _generate_password(user):
         )
     )
     return m.hexdigest()[:8]
+
+
+@app.route('/status', methods=['GET'])
+def status():
+    ''' Application health check endpoint.'''
+    try:
+        # Check for
+        db.session.query("1").from_statement("SELECT 1").all()
+        return "OK!", 200
+    except:
+        return "Not OK!", 503
