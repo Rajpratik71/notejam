@@ -17,6 +17,9 @@ jobs:
 
     working_directory: ~/repo
 
+    environment:
+      SQLALCHEMY_DATABASE_URI_PROD: 'mysql://user:password@localhost/notejam'
+
     steps:
       - checkout
 
@@ -33,12 +36,6 @@ jobs:
             sudo pip install --upgrade pip setuptools
             sudo pip install -r flask/requirements.txt
 
-      - run:
-          name: generate deployment package
-          command: |
-            tar czfv notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
-
-
       - save_cache:
           paths:
             - ./venv
@@ -50,6 +47,41 @@ jobs:
           command: |
             python flask/tests.py
 
+      - run:
+          name: generate deployment artifacts
+          command: |
+            sed -i "s%__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__%$SQLALCHEMY_DATABASE_URI_PROD%" ./flask/notejam/config.py
+            tar czfv notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
+
+
       - store_artifacts:
           path: notejam-flask.tgz
           destination: notejam-flask.tgz
+
+  deploy-prod:
+
+    machine:
+      enabled: true
+    #environment:
+    #  SQLALCHEMY_DATABASE_URI_PROD = $SQLALCHEMY_DATABASE_URI_PROD
+
+    working_directory: ˜/repo
+
+    steps:
+
+      - run:
+          name: deploy package to S3
+          command: aws s3 cp notejam-flask.tgz s3://frmaia-notejam/notejam-flask-latest.tgz
+
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
