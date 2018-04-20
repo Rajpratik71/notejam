@@ -271,8 +271,11 @@ def _generate_password(user):
 def status():
     ''' Application health check endpoint.'''
     try:
-        # Check for
+        # Check for database connection
         db.session.query("1").from_statement("SELECT 1").all()
-        return "OK!", 200
+        app.logger.debug("HealthCheck - Database connection is OK!")
     except:
+        app.logger.critical("HealthCheck - Application is down! Was not possible to connect to DB!!!")
         return "Not OK!", 503
+
+    return "OK!", 200
