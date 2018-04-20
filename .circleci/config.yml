@@ -10,9 +10,6 @@ jobs:
 
     working_directory: ~/project
 
-    environment:
-      SQLALCHEMY_DATABASE_URI_PROD: 'mysql://user:password@localhost/notejam'
-
     steps:
       - checkout
 
