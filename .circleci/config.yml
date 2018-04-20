@@ -59,6 +59,12 @@ jobs:
 
     steps:
 
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "flask/requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
       - run:
           name: Install aws cli
           command:
