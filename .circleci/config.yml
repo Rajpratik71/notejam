@@ -61,8 +61,6 @@ jobs:
     docker:
       - image: circleci/python:2.7.14
 
-    working_directory: ˜/repo
-
     steps:
 
       - restore_cache:
@@ -78,8 +76,8 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "test-codedeploy" ]; then
 
-              aws s3 cp notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
-              aws deploy push --source ./ --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
+              aws s3 cp repo/build/notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
+              aws deploy push --source ./repo --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
 
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
 
