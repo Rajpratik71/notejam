@@ -30,6 +30,8 @@ jobs:
             sudo pip install -r flask/requirements.txt
 
       - save_cache:
+          paths:
+            - ./venv
           key: v1-dependencies-{{ checksum "flask/requirements.txt" }}
 
       # run tests!
@@ -42,14 +44,17 @@ jobs:
           name: generate deployment artifacts
           command: |
             sed -i "s%__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__%$SQLALCHEMY_DATABASE_URI_PROD%" ./flask/notejam/config.py
-            tar czfv notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
+            mkdir -p build
+            tar czfv build/notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
 
       - store_artifacts:
-          path: notejam-flask.tgz
-          destination: notejam-flask.tgz
+          path: build/notejam-flask.tgz
+          destination: notejam-flask__{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}.tgz
 
       - save_cache:
           key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ./
 
   deployment:
 
