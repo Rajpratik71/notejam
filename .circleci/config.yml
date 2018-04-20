@@ -6,14 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:2.7.14
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
 
     working_directory: ~/repo
 
@@ -53,25 +46,39 @@ jobs:
             sed -i "s%__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__%$SQLALCHEMY_DATABASE_URI_PROD%" ./flask/notejam/config.py
             tar czfv notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
 
-
       - store_artifacts:
           path: notejam-flask.tgz
           destination: notejam-flask.tgz
 
   deploy-prod:
 
-    machine:
-      enabled: true
-    #environment:
-    #  SQLALCHEMY_DATABASE_URI_PROD = $SQLALCHEMY_DATABASE_URI_PROD
+    docker:
+      - image: circleci/python:2.7.14
 
     working_directory: ˜/repo
 
     steps:
 
       - run:
-          name: deploy package to S3
-          command: aws s3 cp notejam-flask.tgz s3://frmaia-notejam/notejam-flask-latest.tgz
+          name: Install aws cli
+          command:
+              sudo apt-get -y -qq install awscli
+
+      - run:
+          name: deploy package to AWS S3 and CodeDeploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "prod" ]; then
+
+              aws s3 cp notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
+              aws deploy push --source ./ --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
+
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+
+              aws s3 cp notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
+
+            fi
+          #command: aws deploy push --source ./ --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
+          #command: aws deploy create-deployment --application-name notejam --s3-location bucket=frmaia-notejam,key=notejam-flask-latest.zip,bundleType=zip,eTag=5f5da598211ce072d861c50d9594a1df --deployment-group-name notejam-group --deployment-config-name CodeDeployDefault.OneAtATime --description "Deploying latest builded version."
 
 
 workflows:
@@ -79,9 +86,9 @@ workflows:
   build-and-deploy:
     jobs:
       - build
-      - deploy-prod:
+      - deployment:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: test-codedeploy

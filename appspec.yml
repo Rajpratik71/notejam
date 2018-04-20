@@ -1,0 +1,20 @@
+
+version: 0.0
+os: linux
+files:
+  - source: /flask
+    destination: /opt/app/flask
+hooks:
+  BeforeInstall:
+    - location: aws_codedeploy/install_dependencies.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: aws_codedeploy/start_server.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: aws_codedeploy/stop_server.sh
+      timeout: 300
+      runas: root
+
