@@ -68,7 +68,7 @@ jobs:
 
       - run:
           name: Install aws cli
-          command:
+          command: |
               pwd
               ls
               sudo pip install awscli
@@ -83,7 +83,7 @@ jobs:
 
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
 
-              aws s3 cp repo/build/notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
+              aws s3 cp ./repo/build/notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
 
             fi
           #command: aws deploy push --source ./ --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
