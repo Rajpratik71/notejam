@@ -8,10 +8,7 @@ jobs:
     docker:
       - image: circleci/python:2.7.14
 
-    working_directory: ~/repo
-
-    environment:
-      SQLALCHEMY_DATABASE_URI_PROD: 'mysql://user:password@localhost/notejam'
+    working_directory: ~/project
 
     steps:
       - checkout
@@ -44,41 +41,53 @@ jobs:
           name: generate deployment artifacts
           command: |
             sed -i "s%__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__%$SQLALCHEMY_DATABASE_URI_PROD%" ./flask/notejam/config.py
-            tar czfv notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
+            mkdir -p build
+            tar czfv build/notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
 
       - store_artifacts:
-          path: notejam-flask.tgz
-          destination: notejam-flask.tgz
+          path: build/notejam-flask.tgz
+          destination: notejam-flask__{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}.tgz
 
-  deploy-prod:
+      - save_cache:
+          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ./
+
+  deployment:
 
     docker:
       - image: circleci/python:2.7.14
 
-    working_directory: ˜/repo
+    working_directory: ~/project
 
     steps:
 
+      - restore_cache:
+          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+
       - run:
           name: Install aws cli
-          command:
-              sudo apt-get -y -qq install awscli
+          command: |
+              pwd
+              ls
+              sudo pip install awscli
 
       - run:
           name: deploy package to AWS S3 and CodeDeploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "test-codedeploy" ]; then
 
-              aws s3 cp notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
-              aws deploy push --source ./ --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
+              aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
+              aws deploy push --source ./flask/ --application-name notejam --s3-location s3://frmaia-notejam/prod/codedeploy/notejam-flask-latest.zip --region us-east-1 --ignore-hidden-files
 
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
 
-              aws s3 cp notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
+              aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
+              aws deploy push --source ./flask/ --application-name notejam --s3-location s3://frmaia-notejam/staging/codedeploy/notejam-flask-latest.zip --region us-east-1 --ignore-hidden-files
 
             fi
-          #command: aws deploy push --source ./ --application-name notejam --s3-location s3://frmaia-notejam/prod/notejam-flask-latest.tgz --region us-east-1 --ignore-hidden-files
-          #command: aws deploy create-deployment --application-name notejam --s3-location bucket=frmaia-notejam,key=notejam-flask-latest.zip,bundleType=zip,eTag=5f5da598211ce072d861c50d9594a1df --deployment-group-name notejam-group --deployment-config-name CodeDeployDefault.OneAtATime --description "Deploying latest builded version."
+
+          #command: aws deploy create-deployment --application-name notejam --s3-location bucket=frmaia-notejam,key=/prod/notejam-flask-latest.tgz,bundleType=tgz,eTag=5f5da598211ce072d861c50d9594a1df --deployment-group-name notejam-group --deployment-config-name CodeDeployDefault.OneAtATime --description "Deploying latest builded version."
 
 
 workflows:
