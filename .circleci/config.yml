@@ -50,7 +50,7 @@ jobs:
           path: notejam-flask.tgz
           destination: notejam-flask.tgz
 
-  deploy-prod:
+  deployment:
 
     docker:
       - image: circleci/python:2.7.14
