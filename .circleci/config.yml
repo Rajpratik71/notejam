@@ -30,8 +30,6 @@ jobs:
             sudo pip install -r flask/requirements.txt
 
       - save_cache:
-          paths:
-            - ./venv
           key: v1-dependencies-{{ checksum "flask/requirements.txt" }}
 
       # run tests!
@@ -50,6 +48,9 @@ jobs:
           path: notejam-flask.tgz
           destination: notejam-flask.tgz
 
+      - save_cache:
+          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+
   deployment:
 
     docker:
@@ -60,10 +61,7 @@ jobs:
     steps:
 
       - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "flask/requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: Install aws cli
