@@ -88,6 +88,7 @@ jobs:
                 --deployment-config-name CodeDeployDefault.OneAtATime \
                 --file-exists-behavior OVERWRITE \
                 --auto-rollback-configuration enabled=true,events=DEPLOYMENT_FAILURE,DEPLOYMENT_STOP_ON_ALARM,DEPLOYMENT_STOP_ON_REQUEST \
+                --region us-east-1 \
                 --description "Deploying latest builded version."
 
 
