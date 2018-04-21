@@ -47,21 +47,12 @@ jobs:
       - store_artifacts:
           path: build/notejam-flask.tgz
           destination: notejam-flask__{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}.tgz
-<<<<<<< HEAD
 
       - save_cache:
           key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ./
 
-=======
-
-      - save_cache:
-          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - ./
-
->>>>>>> 21a39af4ef49c339da134caeac11c892c513883b
   deployment:
 
     docker:
@@ -89,7 +80,7 @@ jobs:
               aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
               aws deploy push --source ./flask/ --application-name notejam --s3-location s3://frmaia-notejam/prod/codedeploy/notejam-flask-latest.zip --region us-east-1 --ignore-hidden-files
 
-<<<<<<< HEAD
+
               aws deploy create-deployment \
                 --application-name notejam \
                 --s3-location bucket=frmaia-notejam,key=prod/codedeploy/notejam-flask-latest.zip,bundleType=zip \
@@ -98,15 +89,11 @@ jobs:
                 --file-exists-behavior OVERWRITE \
                 --auto-rollback-configuration enabled=true,events=DEPLOYMENT_FAILURE,DEPLOYMENT_STOP_ON_ALARM,DEPLOYMENT_STOP_ON_REQUEST \
                 --description "Deploying latest builded version."
-=======
-              aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
-              aws deploy push --source ./flask/ --application-name notejam --s3-location s3://frmaia-notejam/prod/codedeploy/notejam-flask-latest.zip --region us-east-1 --ignore-hidden-files
->>>>>>> 21a39af4ef49c339da134caeac11c892c513883b
+
 
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
 
               aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
-<<<<<<< HEAD
               echo "#TODO..."
 
             else
@@ -115,13 +102,6 @@ jobs:
               echo "#TODO..."
 
             fi
-=======
-              aws deploy push --source ./flask/ --application-name notejam --s3-location s3://frmaia-notejam/staging/codedeploy/notejam-flask-latest.zip --region us-east-1 --ignore-hidden-files
-
-            fi
-
-          #command: aws deploy create-deployment --application-name notejam --s3-location bucket=frmaia-notejam,key=/prod/notejam-flask-latest.tgz,bundleType=tgz,eTag=5f5da598211ce072d861c50d9594a1df --deployment-group-name notejam-group --deployment-config-name CodeDeployDefault.OneAtATime --description "Deploying latest builded version."
->>>>>>> 21a39af4ef49c339da134caeac11c892c513883b
 
 
 workflows:
