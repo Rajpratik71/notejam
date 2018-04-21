@@ -75,7 +75,7 @@ jobs:
       - run:
           name: deploy package to AWS S3 and CodeDeploy
           command: |
-            if [ "${CIRCLE_BRANCH}" == "test-codedeploy" ]; then
+            if [ "${CIRCLE_BRANCH}" == "prod" ]; then
 
               aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/prod/notejam-flask-latest.tgz
               aws deploy push --source ./flask/ --application-name notejam --s3-location s3://frmaia-notejam/prod/codedeploy/notejam-flask-latest.zip --region us-east-1 --ignore-hidden-files
@@ -94,9 +94,9 @@ jobs:
               aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/staging/notejam-flask-latest.tgz
               echo "#TODO..."
 
-            elif [ "${CIRCLE_BRANCH}" == "dev" ]; then
+            else
 
-              aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/${CIRCLE_BRANCH}/notejam-flask-latest.tgz
+              aws s3 cp ./build/notejam-flask.tgz s3://frmaia-notejam/dev/branch-${CIRCLE_BRANCH}/notejam-flask-latest.tgz
               echo "#TODO..."
 
             fi
@@ -112,4 +112,4 @@ workflows:
             - build
           filters:
             branches:
-              only: test-codedeploy
+              only: prod
