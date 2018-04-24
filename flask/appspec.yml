@@ -21,3 +21,9 @@ hooks:
     - location: aws_codedeploy/sanity_test.sh
       timeout: 300
       runas: root
+    - location: aws_codedeploy/performance_regression.sh
+      timeout: 300
+      runas: root
+    - location: aws_codedeploy/sanity_test.sh
+      timeout: 300
+      runas: root
