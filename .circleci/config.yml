@@ -47,10 +47,10 @@ jobs:
 
       - store_artifacts:
           path: build/notejam-flask.tgz
-          destination: notejam-flask__{{ .Branch }}-{{ .BuildNum }}.tgz
+          destination: notejam-flask__{{ .Branch }}-{{ .Revision }}.tgz
 
       - save_cache:
-          key: v1-dist-{{ .Branch }}-{{ .BuildNum }}
+          key: v1-dist-{{ .Branch }}-{{ .Revision }}
           paths:
             - ./
 
@@ -64,7 +64,7 @@ jobs:
     steps:
 
       - restore_cache:
-          key: v1-dist-{{ .Branch }}-{{ .BuildNum }}
+          key: v1-dist-{{ .Branch }}-{{ .Revision }}
 
       - run:
           name: Install aws cli
