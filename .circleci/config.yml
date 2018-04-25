@@ -41,15 +41,16 @@ jobs:
           name: generate deployment artifacts
           command: |
             sed -i "s%__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__%$SQLALCHEMY_DATABASE_URI_PROD%" ./flask/notejam/config.py
+            rm -rf build
             mkdir -p build
             tar czfv build/notejam-flask.tgz --exclude='*.pyc' --exclude='*.db' --recursion flask
 
       - store_artifacts:
           path: build/notejam-flask.tgz
-          destination: notejam-flask__{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}.tgz
+          destination: notejam-flask__${CIRCLE_BRANCH}-${CIRCLE_SHA1}.tgz
 
       - save_cache:
-          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-dist-${CIRCLE_BRANCH}-${CIRCLE_SHA1}
           paths:
             - ./
 
@@ -63,7 +64,7 @@ jobs:
     steps:
 
       - restore_cache:
-          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-dist-${CIRCLE_BRANCH}-${CIRCLE_SHA1}
 
       - run:
           name: Install aws cli
