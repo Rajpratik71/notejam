@@ -278,4 +278,4 @@ def status():
         app.logger.critical("HealthCheck - Application is down! Was not possible to connect to DB!!!")
         return "Not OK!", 503
 
-    return "OK!", 200
+    return "Felipe OK!", 200
