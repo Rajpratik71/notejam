@@ -40,7 +40,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="BASE_URL_1" elementType="Argument">
             <stringProp name="Argument.name">BASE_URL_1</stringProp>
-            <stringProp name="Argument.value">notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+            <stringProp name="Argument.value">localhost:8000</stringProp>
           </elementProp>
         </collectionProp>
       </Arguments>
@@ -88,7 +88,7 @@
         <longProp name="ThreadGroup.delay">0</longProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/signin/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/signin/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="password" elementType="HTTPArgument">
@@ -122,7 +122,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -130,7 +130,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/signin/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/signin/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -145,7 +145,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/signin/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/signin/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="password" elementType="HTTPArgument">
@@ -179,7 +179,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -187,7 +187,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/signin/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/signin/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -202,7 +202,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -217,7 +217,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/signin/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/signin/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -232,7 +232,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -247,7 +247,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -262,7 +262,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="name" elementType="HTTPArgument">
@@ -302,7 +302,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -310,7 +310,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/notes/create/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -325,7 +325,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -340,7 +340,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -355,7 +355,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/create/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/create/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -370,7 +370,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/notes/create/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -385,7 +385,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/create/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/create/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="name" elementType="HTTPArgument">
@@ -413,7 +413,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -421,7 +421,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/create/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/create/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -436,7 +436,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -451,7 +451,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/create/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/create/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -466,7 +466,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/7/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -481,7 +481,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -496,7 +496,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/?pad=7" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="pad" elementType="HTTPArgument">
@@ -518,7 +518,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/7/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -533,7 +533,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/?pad=7" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="name" elementType="HTTPArgument">
@@ -573,7 +573,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -581,7 +581,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/notes/create/?pad=7</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -596,7 +596,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/7/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -611,7 +611,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/notes/create/?pad=7</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -626,7 +626,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/?pad=7" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="pad" elementType="HTTPArgument">
@@ -648,7 +648,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/7/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -663,7 +663,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/notes/create/?pad=7" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="name" elementType="HTTPArgument">
@@ -703,7 +703,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -711,7 +711,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/notes/create/?pad=7</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -726,7 +726,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/7/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -741,7 +741,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/notes/create/?pad=7</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/notes/create/?pad=7</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -756,7 +756,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/edit/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/7/edit/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -771,7 +771,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/7/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -786,7 +786,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/edit/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/7/edit/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="name" elementType="HTTPArgument">
@@ -814,7 +814,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Origin" elementType="Header">
                 <stringProp name="Header.name">Origin</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com</stringProp>
+                <stringProp name="Header.value">http://localhost:8000</stringProp>
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -822,7 +822,7 @@
               </elementProp>
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/edit/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/7/edit/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -837,7 +837,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/pads/7/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -852,7 +852,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/edit/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/7/edit/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -867,7 +867,7 @@
           </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/signout/" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://localhost:8000/signout/" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -882,7 +882,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Referer" elementType="Header">
                 <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">http://notejam-elb-1831494875.us-east-1.elb.amazonaws.com/pads/7/</stringProp>
+                <stringProp name="Header.value">http://localhost:8000/pads/7/</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>

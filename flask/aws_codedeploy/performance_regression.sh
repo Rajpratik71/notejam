@@ -5,7 +5,7 @@ wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-3.1.tgz -O /t
 tar xzfv /tmp/apache-jmeter-3.1.tgz -C /tmp/
 
 # Run jmeter on localhost
-/tmp/apache-jmeter-3.1/bin/jmeter -t notejam.jmx -n -Jusers=5000 -Jduration=60 -l /tmp/notejam-jmeter-test.log
+/tmp/apache-jmeter-3.1/bin/jmeter -t /opt/app/flask/aws_codedeploy/jmeter/notejam.jmx -n -Jusers=5000 -Jduration=60 -l /tmp/notejam-jmeter-test.log
 
 if [[ $? == 0 ]]; then
     echo "OK - Load for load testing / performance regression tests."
