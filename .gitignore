@@ -35,6 +35,7 @@ nosetests.xml
 
 # Vim
 *.swp
+*.orig
 
 # DB
 *.db
