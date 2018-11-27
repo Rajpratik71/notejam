@@ -1,4 +1,8 @@
 var settings = {
+  production: {
+    db: "storage/notejam.db",
+    dsn: "sqlite://storage/notejam.db"
+  },
   development: {
     db: "notejam.db",
     dsn: "sqlite://notejam.db"
