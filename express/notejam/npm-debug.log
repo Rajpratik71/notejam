@@ -1,0 +1,43 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'start' ]
+2 info using npm@3.10.10
+3 info using node@v6.14.4
+4 verbose run-script [ 'prestart', 'start', 'poststart' ]
+5 info lifecycle notejam@0.0.1~prestart: notejam@0.0.1
+6 verbose lifecycle notejam@0.0.1~prestart: unsafe-perm in lifecycle true
+7 verbose lifecycle notejam@0.0.1~prestart: PATH: /usr/lib/node_modules/npm/bin/node-gyp-bin:/tmp/notejam/express/notejam/node_modules/.bin:/opt/chefdk/bin:/home/ligouras/.chefdk/gem/ruby/2.5.0/bin:/opt/chefdk/embedded/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/ligouras/Android/Sdk/tools:/home/ligouras/Android/Sdk/platform-tools:/home/ligouras/Android/Sdk/tools:/home/ligouras/Android/Sdk/platform-tools:/opt/chefdk/gitbin
+8 verbose lifecycle notejam@0.0.1~prestart: CWD: /tmp/notejam/express/notejam
+9 silly lifecycle notejam@0.0.1~prestart: Args: [ '-c', 'node ./db.js' ]
+10 silly lifecycle notejam@0.0.1~prestart: Returned: code: 1  signal: null
+11 info lifecycle notejam@0.0.1~prestart: Failed to exec prestart script
+12 verbose stack Error: notejam@0.0.1 prestart: `node ./db.js`
+12 verbose stack Exit status 1
+12 verbose stack     at EventEmitter.<anonymous> (/usr/lib/node_modules/npm/lib/utils/lifecycle.js:255:16)
+12 verbose stack     at emitTwo (events.js:106:13)
+12 verbose stack     at EventEmitter.emit (events.js:191:7)
+12 verbose stack     at ChildProcess.<anonymous> (/usr/lib/node_modules/npm/lib/utils/spawn.js:40:14)
+12 verbose stack     at emitTwo (events.js:106:13)
+12 verbose stack     at ChildProcess.emit (events.js:191:7)
+12 verbose stack     at maybeClose (internal/child_process.js:920:16)
+12 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:230:5)
+13 verbose pkgid notejam@0.0.1
+14 verbose cwd /tmp/notejam/express/notejam
+15 error Linux 4.4.0-130-generic
+16 error argv "/usr/bin/node" "/usr/bin/npm" "start"
+17 error node v6.14.4
+18 error npm  v3.10.10
+19 error code ELIFECYCLE
+20 error notejam@0.0.1 prestart: `node ./db.js`
+20 error Exit status 1
+21 error Failed at the notejam@0.0.1 prestart script 'node ./db.js'.
+21 error Make sure you have the latest version of node.js and npm installed.
+21 error If you do, this is most likely a problem with the notejam package,
+21 error not with npm itself.
+21 error Tell the author that this fails on your system:
+21 error     node ./db.js
+21 error You can get information on how to open an issue for this project with:
+21 error     npm bugs notejam
+21 error Or if that isn't available, you can get their info via:
+21 error     npm owner ls notejam
+21 error There is likely additional logging output above.
+22 verbose exit [ 1, true ]
