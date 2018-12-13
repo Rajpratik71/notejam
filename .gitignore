@@ -45,6 +45,8 @@ nosetests.xml
 
 # Node.js modules
 node_modules
+yarn-error.log
+package-lock.json
 
 # Bowe components
 bower_components

@@ -10,11 +10,12 @@ var orm = require('orm');
 var expressValidator = require('express-validator');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var hsts = require('hsts');
 
 var users = require('./routes/users');
 var pads = require('./routes/pads');
 var notes = require('./routes/notes');
-var settings = require('./settings')
+var settings = require('./settings');
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(favicon());
+app.use(hsts({maxAge: 10886400}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -36,8 +38,13 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // DB configuration
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(settings.db);
+// var sqlite3 = require('sqlite3').verbose();
+// if (settings.env === "local")
+//   var db = new sqlite3.Database(settings.db);
+// else {
+  var db = require('mysql').createConnection(settings.dsn);
+// }
+
 
 orm.settings.set("instance.returnAllErrors", true);
 app.use(orm.express(settings.dsn, {
@@ -87,7 +94,7 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (app.get('env') === 'local') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

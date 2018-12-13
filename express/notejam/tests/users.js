@@ -1,5 +1,5 @@
-// Enable test environment
-process.env.NODE_ENV = 'test';
+// Enable local environment
+process.env.NODE_ENV = 'local';
 
 var request = require('superagent');
 var should = require('should');
@@ -53,6 +53,19 @@ describe('User', function(){
           done();
         });
     });
+
+
+    it('if passwords do not match', function(done) {
+      var agent = request.agent();
+      agent
+      .post(config.url('/signin'))
+      .send({email: 'user1@example.com', password: '1234' })
+      .end(function(error, res){
+          res.text.should.containEql('Invalid password');
+          done();
+      });
+    });
+
   });
 
   it('can successfully sign up', function(done) {
@@ -101,6 +114,11 @@ describe('User', function(){
         });
     });
 
-    // @TODO implement "if passwords do not match" case
   });
-})
+});
+
+after(function (done) {
+  console.log('Cleaning up test DB entries');
+  db.removeTables(done);
+  console.log('Cleanup completed');
+});

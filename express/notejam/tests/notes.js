@@ -1,5 +1,5 @@
-// Enable test environment
-process.env.NODE_ENV = 'test';
+// Enable local environment
+process.env.NODE_ENV = 'local';
 
 var request = require('superagent');
 var should = require('should');
@@ -35,6 +35,17 @@ describe('Note', function() {
             res.redirects.should.eql([config.url('/')]);
             res.text.should.containEql('Note is successfully created');
             done();
+          });
+    });
+
+    it('successfully created in sequence', function(done) {
+      agent
+          .post(config.url('/notes/create'))
+          .send({name: 'Another new note', text: 'more text', pad_id: 1})
+          .end(function(error, res){
+              res.redirects.should.eql([config.url('/')]);
+              res.text.should.containEql('Note is successfully created');
+              done();
           });
     });
 
@@ -138,4 +149,23 @@ describe('Note', function() {
       })
     });
   });
+
+  describe('can be', function() {
+    it('completely cleaned up', function(done) {
+      var agent = request.agent();
+      var signed = config.signInUser(
+        agent, {email: 'user1@example.com', password: 'password'}
+      );
+      signed(function() {
+        agent
+          .post(config.url('/notes/1/delete'))
+          .end(function(error, res){
+            res.should.have.status(200);
+            done();
+          });
+      })
+    });
+  });
+
 });
+

@@ -1,5 +1,5 @@
-// Enable test environment
-process.env.NODE_ENV = 'test';
+// Enable local environment
+process.env.NODE_ENV = 'local';
 
 var request = require('superagent');
 var should = require('should');
@@ -38,7 +38,7 @@ describe('Pad', function() {
 
     it('successfully edited', function(done) {
       agent
-        .post(config.url('/pads/1/edit'))
+        .post(config.url('/pads/3/edit'))
           .send({name: 'New pad name'})
           .end(function(error, res){
             res.redirects.should.eql([config.url('/')]);
@@ -49,7 +49,7 @@ describe('Pad', function() {
 
     it('successfully deleted', function(done) {
       agent
-        .post(config.url('/pads/2/delete'))
+        .post(config.url('/pads/3/delete'))
           .end(function(error, res){
             res.redirects.should.eql([config.url('/')]);
             res.text.should.containEql('Pad is successfully deleted');
