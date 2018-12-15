@@ -2,31 +2,26 @@ var sqlite3 = require('sqlite3').verbose();
 var async = require('async');
 
 var settings = require('./settings');
-// if (settings.env === "local") {
-//     var db = new sqlite3.Database(settings.db);
-// }
-// else {
-    var db = require('mysql').createConnection(settings.dsn);
-    // mini sqlite -> mysql conversion driver
-    db.run = function (sql, params, cb) {
-        sql = sql.replace("AUTOINCREMENT", "AUTO_INCREMENT");
-        sql = sql.replace(/default current_timestamp/g, "timestamp default current_timestamp");
-        references = /,([a-z_]+) ([A-Z ]+) REFERENCES ([a-z(]+\))/g;
-        foreignkeys = [];
-        while(match = references.exec(sql)) {
-            foreignkeys.push("FOREIGN KEY (" + match[1] + ") REFERENCES " + match[3]);
-        }
-        if(foreignkeys.length > 0) {
-            sql = sql.replace(/REFERENCES [a-z(]+\)/g, "");
-            sql = sql.replace(");", "," + foreignkeys.join(',') + ");");
-        }
-        this.query(sql, params, cb);
-    };
-    db.close = function (err) {
-        this.end(err);
-    };
-// }
 
+var db = require('mysql').createConnection(settings.dsn);
+// mini sqlite -> mysql conversion driver
+db.run = function (sql, params, cb) {
+    sql = sql.replace("AUTOINCREMENT", "AUTO_INCREMENT");
+    sql = sql.replace(/default current_timestamp/g, "timestamp default current_timestamp");
+    references = /,([a-z_]+) ([A-Z ]+) REFERENCES ([a-z(]+\))/g;
+    foreignkeys = [];
+    while(match = references.exec(sql)) {
+        foreignkeys.push("FOREIGN KEY (" + match[1] + ") REFERENCES " + match[3]);
+    }
+    if(foreignkeys.length > 0) {
+        sql = sql.replace(/REFERENCES [a-z(]+\)/g, "");
+        sql = sql.replace(");", "," + foreignkeys.join(',') + ");");
+    }
+    this.query(sql, params, cb);
+};
+db.close = function (err) {
+    this.end(err);
+};
 
 var functions = {
   createTables: function(next) {
@@ -134,8 +129,7 @@ var functions = {
       done();
     })
   }
-}
-
+};
 
 if (require.main === module) {
   functions.createTables(function() {

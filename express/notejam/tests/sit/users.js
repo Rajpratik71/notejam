@@ -5,9 +5,9 @@ var request = require('superagent');
 var should = require('should');
 require('should-http');
 
-var db = require('../db');
+var db = require('../../db');
 var config = require('./config');
-var app = require('../app');
+var app = require('../../app');
 
 app.listen(3000);
 

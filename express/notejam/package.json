@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "start:dev": "NODE_ENV=development DEBUG=notejam* node ./bin/www",
-    "start:prod": "NODE_ENV=test node ./bin/www",
-    "test:unit": "NODE_ENV=local node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests"
+    "start:prod": "NODE_ENV=prod node ./bin/www",
+    "test:unit": "NODE_ENV=local node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/unit",
+    "test:sit": "NODE_ENV=local node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/sit"
   },
   "dependencies": {
     "express": "~4.2.0",
