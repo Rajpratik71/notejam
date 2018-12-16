@@ -38,12 +38,18 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // DB configuration
-// var sqlite3 = require('sqlite3').verbose();
-// if (settings.env === "local")
-//   var db = new sqlite3.Database(settings.db);
-// else {
+var sqlite3 = require('sqlite3').verbose();
+
+var env = process.env.NODE_ENV;
+if (!env) {
+  env = 'local'
+}
+
+if (env === "local")
+  var db = new sqlite3.Database(settings.db);
+else {
   var db = require('mysql').createConnection(settings.dsn);
-// }
+}
 
 
 orm.settings.set("instance.returnAllErrors", true);

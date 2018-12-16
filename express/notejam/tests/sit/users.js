@@ -1,5 +1,5 @@
 // Enable local environment
-process.env.NODE_ENV = 'local';
+process.env.NODE_ENV = 'prod';
 
 var request = require('superagent');
 var should = require('should');

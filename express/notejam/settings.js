@@ -1,6 +1,7 @@
 var settings = {
     local: {
-        dsn: "mysql://"+process.env.DB_USER+":"+process.env.DB_PASSWORD+"@"+process.env.DB_HOST+"/notejam_unit"
+        db: "notejam.db",
+        dsn: "sqlite://notejam.db"
     },
     development: {
         dsn: "mysql://"+process.env.DB_USER+":"+process.env.DB_PASSWORD+"@"+process.env.DB_HOST+"/notejam_dev"
