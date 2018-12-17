@@ -2,7 +2,6 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var favicon = require('static-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var flash = require('connect-flash');
 var bodyParser = require('body-parser');
@@ -26,7 +25,6 @@ app.set('view engine', 'jade');
 
 app.use(favicon());
 app.use(hsts({maxAge: 10886400}));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(expressValidator());
@@ -63,6 +61,11 @@ app.use(orm.express(settings.dsn, {
     });
   }
 }));
+
+var blacklog = require("./logger");
+
+blacklog.debug("Overriding 'Express' logger");
+app.use(require('morgan')({ "stream": blacklog.stream }));
 
 // Flash Messages configuration
 app.use(function(req, res, next){
