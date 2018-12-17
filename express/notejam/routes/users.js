@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var debug = require('debug')('http')
+var debug = require('debug')('http');
 var orm = require('orm');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -8,7 +8,7 @@ var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 var stubTransport = require('nodemailer-stub-transport');
 
-var helpers = require('../helpers')
+var helpers = require('../helpers');
 var settings = require('../settings');
 
 // Sign Up
@@ -17,13 +17,14 @@ router.get('/signup', function(req, res) {
 });
 
 router.post('/signup', function(req, res) {
+  debug('Body is ' + req.body);
   var data = req.body;
   if (data['password']) {
     data['password'] = generateHash(data['password']);
   };
   req.models.User.create(data, function(err, message) {
-    console.log(message);
-    console.log(err);
+    debug('Message is ' + message);
+    debug('Create Error is ' + err);
     if (err) {
       res.locals.errors = helpers.formatModelErrors(err);
     } else {
@@ -51,22 +52,18 @@ router.post('/signin', function(req, res, next) {
 
   if (!errors) {
     passport.authenticate('local', function(err, user, info) {
-      console.log(info);
-      console.log(err);
       if (err) { return next(err) }
       if (!user) {
         req.flash('error', info.message);
         return res.redirect('/signin')
       }
       req.logIn(user, function(err) {
-        console.log(err);
         if (err) { return next(err); }
         return res.redirect('/');
       });
     })(req, res, next);
   } else {
     res.locals.errors = errors;
-    console.log(errors);
     res.render('users/signin');
   }
 });
@@ -84,7 +81,6 @@ router.post('/settings', function(req, res, next) {
   );
   if (req.validationErrors()) {
     var errors = helpers.formatFormErrors(req.validationErrors());
-    console.log(errors);
   }
 
   if (!errors) {
@@ -105,7 +101,6 @@ router.post('/settings', function(req, res, next) {
     })
   } else {
     res.locals.errors = errors;
-    console.log(errors);
     res.render('users/settings');
   }
 });
@@ -119,7 +114,6 @@ router.post('/forgot-password', function(req, res) {
   req.checkBody('email', 'Email is required').notEmpty();
   if (req.validationErrors()) {
     res.locals.errors = helpers.formatFormErrors(req.validationErrors());
-    console.log(res.locals.errors);
     res.render('users/forgot-password');
     return;
   }
@@ -136,7 +130,6 @@ router.post('/forgot-password', function(req, res) {
         return res.redirect('/signin');
       });
     } else {
-      console.log(err);
       req.flash(
         'error',
         'No user with given email found'
@@ -161,7 +154,6 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
   findById(id, function (err, user) {
-    console.log(err);
     done(err, user);
   });
 });
@@ -170,8 +162,6 @@ passport.use(new LocalStrategy(
   {usernameField: 'email', passwordField: 'password'},
   function(username, password, done) {
     findByUsername(username, function(err, user) {
-      console.log(user);
-      console.log(err);
       if (err) {
         return done(err);
       }
@@ -189,11 +179,8 @@ passport.use(new LocalStrategy(
 function findByUsername(username, fn) {
   orm.connect(settings.dsn, function(err, db) {
     db.load("../models", function (err) {
-      console.log(err);
       var User = db.models.users;
-      User.find({email: username}, function (err, users) {
-        console.log(users);
-        console.log(err);
+      db.models.users.find({email: username}, function (err, users) {
         if (users.length) {
           return fn(null, users[0]);
         } else {
@@ -206,12 +193,9 @@ function findByUsername(username, fn) {
 
 function findById(id, fn) {
   orm.connect(settings.dsn, function(err, db) {
-    console.log(err);
     db.load("../models", function (err) {
-      console.log(err);
       var User = db.models.users;
       User.get(id, function (err, user) {
-        console.log(err);
         if (err) {
           fn(new Error('User ' + id + ' does not exist'));
         }
