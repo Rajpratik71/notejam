@@ -4,7 +4,7 @@ var settings = {
         dsn: "sqlite://notejam.db"
     },
     development: {
-        dsn: "mysql://"+process.env.DB_USER+":"+process.env.DB_PASSWORD+"@"+process.env.DB_HOST+"/notejam_dev"
+        dsn: "mysql://"+process.env.DB_USER+":"+process.env.DB_PASSWORD+"@"+process.env.DB_HOST+"/notejam_prod"
     },
     prod: {
         dsn: "mysql://"+process.env.DB_USER+":"+process.env.DB_PASSWORD+"@"+process.env.DB_HOST+"/notejam_prod"
