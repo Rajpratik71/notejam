@@ -1,10 +1,10 @@
 {
   "name": "notejam",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
-    "start:dev": "NODE_ENV=development DEBUG=* node ./bin/www",
-    "start:prod": "NODE_ENV=prod node db.js ; NODE_ENV=prod DEBUG=* node ./bin/www",
+    "start:dev": "NODE_ENV=development DEBUG=notejam* node ./bin/www",
+    "start:prod": "NODE_ENV=prod DEBUG=notejam* node ./bin/www",
     "test:unit": "NODE_ENV=local node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/unit",
     "test:sit": "NODE_ENV=prod node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/sit"
   },
