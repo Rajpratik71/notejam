@@ -57,6 +57,7 @@ app.use(orm.express(settings.dsn, {
       models.User = db.models.users;
       models.Pad = db.models.pads;
       models.Note = db.models.notes;
+      console.log(err);
       next();
     });
   }
@@ -98,6 +99,7 @@ app.use('/', notes);
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
+  console.log(err);
   next(err);
 });
 
@@ -110,6 +112,7 @@ if (app.get('env') === 'development') {
       message: err.message,
       error: err
     });
+    console.log(err);
   });
 }
 
@@ -121,6 +124,7 @@ app.use(function(err, req, res, next) {
     message: err.message,
     error: {}
   });
+  console.log(err);
 });
 
 module.exports = app;

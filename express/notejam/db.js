@@ -29,6 +29,7 @@ if (env === 'local') {
   };
   db.close = function (err) {
     this.end(err);
+    console.log(err);
   };
 }
 
@@ -63,6 +64,8 @@ var functions = {
       }
     },
     function(err, results) {
+      console.log(results);
+      console.log(err);
       next();
     });
   },
@@ -97,6 +100,8 @@ var functions = {
                 function() { callback(null) });
         }
       ], function(err, results) {
+        console.log(results);
+        console.log(err);
         next();
       })
     });
@@ -117,6 +122,8 @@ var functions = {
               function(result) { callback(null); });
       }
     ], function(err, results) {
+      console.log(results);
+      console.log(err);
       next();
     })
   },
@@ -136,6 +143,8 @@ var functions = {
           function(result) { callback(null); });
       }
     ], function(err, results) {
+      console.log(results);
+      console.log(err);
       done();
     })
   }
