@@ -9,7 +9,7 @@ var orm = require('orm');
 var expressValidator = require('express-validator');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var hsts = require('hsts');
+var shell = require('shelljs');
 
 var users = require('./routes/users');
 var pads = require('./routes/pads');
@@ -24,7 +24,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(favicon());
-app.use(hsts({maxAge: 10886400}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(expressValidator());
@@ -43,10 +42,19 @@ if (!env) {
   env = 'local'
 }
 
-if (env === "local")
+console.log(process.version);
+
+if (env === "local") {
   var db = new sqlite3.Database(settings.db);
+  shell.exec('NODE_ENV=local node db.js', function(code, stdout, stderr) {
+    // console.log('Exit code:', code);
+    // console.log('Program output:', stdout);
+    // console.log('Program stderr:', stderr);
+  });
+}
 else {
   var db = require('mysql').createConnection(settings.dsn);
+  console.log("DB_HOST is: " + process.env.DB_HOST);
 }
 
 
