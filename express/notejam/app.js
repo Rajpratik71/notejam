@@ -47,14 +47,13 @@ console.log(process.version);
 if (env === "local") {
   var db = new sqlite3.Database(settings.db);
   shell.exec('NODE_ENV=local node db.js', function(code, stdout, stderr) {
-    // console.log('Exit code:', code);
-    // console.log('Program output:', stdout);
-    // console.log('Program stderr:', stderr);
   });
 }
 else {
   var db = require('mysql').createConnection(settings.dsn);
   console.log("DB_HOST is: " + process.env.DB_HOST);
+  shell.exec('NODE_ENV=prod node db.js', function(code, stdout, stderr) {
+  });
 }
 
 
