@@ -5,15 +5,21 @@ phases:
     commands:
       # Install dependencies needed for running tests
       - echo Build started on `date`
-      - pip install -r flask/requirements.txt
+      - cd flask/
+      - pip install -r requirements.txt -t build/
   pre_build:
     commands:
       - echo "[+] Running tests..."
-      - cd flask/
       - python -m unittest tests
-      - echo "[+] Creating DB schemas..."
-      - python db.py
   build:
     commands:
       - echo "Build started"
-      - python runserver.py
+      - echo "[+] Creating DB schemas..."
+      - python db.py
+      - echo "Copy python files"
+      - cp runserver.py build/
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'
+  discard-paths: no
