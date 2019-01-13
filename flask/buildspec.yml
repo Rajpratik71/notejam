@@ -12,7 +12,7 @@ phases:
       - echo "[+] Running tests..."
       - cp *.py build/
       - cd build/
-      - python -m unittest build/tests
+      - python -m unittest tests
   build:
     commands:
       - echo "Build started"
