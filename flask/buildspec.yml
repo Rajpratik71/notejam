@@ -6,13 +6,10 @@ phases:
       # Install dependencies needed for running tests
       - echo Build started on `date`
       - cd flask/
-      - pip install -r requirements.txt -t build/
+      - pip install -r requirements.txt
   pre_build:
     commands:
       - echo "[+] Running tests..."
-      - cp *.py build/
-      - cp -r notejam/ build/
-      - cd build/
       - python -m unittest tests
   build:
     commands:
