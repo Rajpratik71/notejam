@@ -9,4 +9,5 @@ phases:
   pre_build:
     commands:
       - echo "[+] Running tests..."
+      - cd flask/
       - python -m unittest tests
