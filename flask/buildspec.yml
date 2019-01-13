@@ -11,3 +11,9 @@ phases:
       - echo "[+] Running tests..."
       - cd flask/
       - python -m unittest tests
+      - echo "[+] Creating DB schemas..."
+      - python db.py
+  build:
+    commands:
+      - echo "Build started"
+      - python runserver.py
