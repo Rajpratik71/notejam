@@ -11,6 +11,7 @@ phases:
     commands:
       - echo "[+] Running tests..."
       - cp *.py build/
+      - cp -r notejam/ build/
       - cd build/
       - python -m unittest tests
   build:
