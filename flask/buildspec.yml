@@ -10,14 +10,14 @@ phases:
   pre_build:
     commands:
       - echo "[+] Running tests..."
-      - python -m unittest tests
+      - cp *.py build/
+      - cd build/
+      - python -m unittest build/tests
   build:
     commands:
       - echo "Build started"
       - echo "[+] Creating DB schemas..."
       - python db.py
-      - echo "Copy python files"
-      - cp runserver.py build/
 artifacts:
   files:
     - '**/*'
