@@ -8,7 +8,7 @@ class Config(object):
     CSRF_ENABLED = True
     CSRF_SESSION_KEY = 'notejam-flask-secret-key'
     LOCAL_DB = 'sqlite:///' + os.path.join(basedir, 'notejam.db')
-    SQLALCHEMY_DATABASE_URI = os.environ.get("RDS_ENDPOINT", default="LOCAL_DB")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("RDS_ENDPOINT", default=LOCAL_DB)
 
 
 
