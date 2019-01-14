@@ -34,7 +34,7 @@ workflows:
                 - /^feature\/.*/
                 - /^(hot)?fix\/.*/
       - aws-ecr/build_and_push_image:
-          path: -./spring
+          path: ./spring/Dockerfile
           account-url: ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPOSITORY
           create-repo: false
