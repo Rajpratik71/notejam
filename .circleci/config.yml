@@ -24,7 +24,7 @@ jobs:
           paths:
             - target/*.jar
             - Dockerfile
-  docker:
+  docker_build:
     machine: true
     steps:
       - setup_remote_docker
@@ -64,7 +64,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           requires:
             - build
-            - docker
+            - docker_build
           family: 'nodejam'
           cluster-name: 'default-cluster'
           container-image-name-updates: 'container=nodejam,tag=$CIRCLE_BUILD_NUM'
