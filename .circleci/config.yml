@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:8u171-jdk
-    working_directory: ~/project_src/spring
+    
     steps:
       - checkout:
           path: ~/project_src
@@ -33,11 +33,12 @@ workflows:
                 - /^feature\/.*/
                 - /^(hot)?fix\/.*/
       - aws-ecr/build_and_push_image:
-          #context: ~/project_src/spring
+          path: ~/project_src/spring
           account-url: ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPOSITORY
           create-repo: false
           tag: version-$CIRCLE_BUILD_NUM
+
           requires:
             - build
           filters:
