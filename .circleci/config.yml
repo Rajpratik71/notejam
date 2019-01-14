@@ -37,7 +37,7 @@ workflows:
           account-url: ECR_ACCOUNT_URL
           repo: AWS_ECR_REPOSITORY
           create-repo: false
-          tag: $CIRCLE_BUILD_NUM
+          tag: version-$CIRCLE_BUILD_NUM
           requires:
             - build
           filters:
