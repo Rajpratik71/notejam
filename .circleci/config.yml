@@ -52,7 +52,7 @@ workflows:
                 - dev
                 - /^feature\/.*/
                 - /^(hot)?fix\/.*/
-      - docker:
+      - docker_workflow:
           requires:
             - build
           filters:
@@ -64,7 +64,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           requires:
             - build
-            - docker_build
+            - docker_workflow
           family: 'nodejam'
           cluster-name: 'default-cluster'
           container-image-name-updates: 'container=nodejam,tag=$CIRCLE_BUILD_NUM'
