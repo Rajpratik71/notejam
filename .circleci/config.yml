@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@1.1.2
   aws-ecs: circleci/aws-ecs@0.0.4
@@ -21,7 +21,6 @@ jobs:
           path: target/*.jar
 
 workflows:
-  version: 2
   build-and-deploy:
     jobs:
       - build:
