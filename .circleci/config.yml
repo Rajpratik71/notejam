@@ -19,7 +19,26 @@ jobs:
           key: java-spring-{{ checksum "pom.xml" }}
       - store_artifacts:
           path: target/*.jar
-
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - target/*.jar
+            - Dockerfile
+    docker:
+      machine: true
+      steps:
+        - setup_remote_docker
+        - attach_workspace:
+          at: ~/
+        - aws-ecr/build-image:
+            path: .
+            account-url: ECR_ACCOUNT_URL
+            repo: $AWS_ECR_REPOSITORY
+            tag: version-$CIRCLE_BUILD_NUM
+        - aws-ecr/push-image:
+            account-url: ECR_ACCOUNT_URL
+            path: .
+            tag: version-$CIRCLE_BUILD_NUM
 
 workflows:
   build-and-deploy:
@@ -33,12 +52,7 @@ workflows:
                 - dev
                 - /^feature\/.*/
                 - /^(hot)?fix\/.*/
-      - aws-ecr/build_and_push_image:
-          path: .
-          account-url: ECR_ACCOUNT_URL
-          repo: $AWS_ECR_REPOSITORY
-          create-repo: false
-          tag: version-$CIRCLE_BUILD_NUM
+      - docker:
           requires:
             - build
           filters:
@@ -49,8 +63,8 @@ workflows:
                 - dev
       - aws-ecs/deploy-service-update:
           requires:
-            - aws-ecr/build_and_push_image
             - build
+            - docker
           family: 'nodejam'
           cluster-name: 'default-cluster'
           container-image-name-updates: 'container=nodejam,tag=$CIRCLE_BUILD_NUM'
