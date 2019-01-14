@@ -35,7 +35,7 @@ workflows:
       - aws-ecr/build_and_push_image:
           context: ~/project_src/spring
           account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
-          repo: $AWS_ECR_REPOSITORY
+          repo: AWS_ECR_REPOSITORY
           create-repo: false
           tag: $CIRCLE_BUILD_NUM
           requires:
