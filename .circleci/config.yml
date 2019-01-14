@@ -24,21 +24,21 @@ jobs:
           paths:
             - target/*.jar
             - Dockerfile
-    docker:
-      machine: true
-      steps:
-        - setup_remote_docker
-        - attach_workspace:
-          at: ~/
-        - aws-ecr/build-image:
-            path: .
-            account-url: ECR_ACCOUNT_URL
-            repo: $AWS_ECR_REPOSITORY
-            tag: version-$CIRCLE_BUILD_NUM
-        - aws-ecr/push-image:
-            account-url: ECR_ACCOUNT_URL
-            path: .
-            tag: version-$CIRCLE_BUILD_NUM
+  docker:
+    machine: true
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+        at: ~/
+      - aws-ecr/build-image:
+          path: .
+          account-url: ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPOSITORY
+          tag: version-$CIRCLE_BUILD_NUM
+      - aws-ecr/push-image:
+          account-url: ECR_ACCOUNT_URL
+          path: .
+          tag: version-$CIRCLE_BUILD_NUM
 
 workflows:
   build-and-deploy:
