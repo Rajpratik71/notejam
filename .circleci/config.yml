@@ -26,6 +26,7 @@ jobs:
           create-repo: false
           tag: version-$CIRCLE_BUILD_NUM
   deploy:
+    machine: true
     working_directory: ~/project_src/spring
     steps:
     - checkout:
