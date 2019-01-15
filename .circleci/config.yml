@@ -38,7 +38,7 @@ jobs:
           account-url: ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPOSITORY
           tag: version-$CIRCLE_BUILD_NUM
-      - aws-ecr/ecr-login:
+      - aws-ecr/ecr-login: {}
       - aws-ecr/push-image:
           account-url: ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPOSITORY
