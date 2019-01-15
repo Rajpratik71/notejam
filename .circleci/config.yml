@@ -37,12 +37,12 @@ jobs:
           path: .
           account-url: ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPOSITORY
-          tag: version-$CIRCLE_WORKFLOW_ID
+          tag: v-$CIRCLE_SHA1
       - aws-ecr/ecr-login: {}
       - aws-ecr/push-image:
           account-url: ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPOSITORY
-          tag: version-$CIRCLE_WORKFLOW_ID
+          tag: v-$CIRCLE_SHA1
 
 workflows:
   build-and-deploy:
@@ -71,4 +71,4 @@ workflows:
             - docker_build
           family: 'nodejam'
           cluster-name: 'default-cluster'
-          container-image-name-updates: 'container=nodejam,image-and-tag=${ECR_ACCOUNT_URL}/${AWS_ECR_REPOSITORY}:version-${CIRCLE_WORKFLOW_ID}'
+          container-image-name-updates: 'container=nodejam,image-and-tag=${ECR_ACCOUNT_URL}/${AWS_ECR_REPOSITORY}:v-${CIRCLE_SHA1}'
