@@ -26,6 +26,7 @@ jobs:
           paths:
             - target/*.jar
             - Dockerfile
+            - prod.application.properties
   docker_build:
     machine: true
     steps:
