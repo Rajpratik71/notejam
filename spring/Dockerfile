@@ -10,5 +10,5 @@ ENV LC_ALL en_US.UTF-8
 
 VOLUME /tmp
 COPY target/*.jar app.jar
-COPY application.properties /
+COPY prod.application.properties /
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
