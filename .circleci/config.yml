@@ -20,7 +20,7 @@ jobs:
       - store_artifacts:
           path: target/*.jar
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - target/*.jar
             - Dockerfile
