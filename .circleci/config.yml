@@ -31,7 +31,7 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-          at: ~/
+          at: .
       - run: ls -AlR .
       - aws-ecr/build-image:
           path: .
