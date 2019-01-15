@@ -64,7 +64,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           requires:
             - build
-            - docker_workflow
+            - docker_build
           family: 'nodejam'
           cluster-name: 'default-cluster'
           container-image-name-updates: 'container=nodejam,tag=$CIRCLE_BUILD_NUM'
