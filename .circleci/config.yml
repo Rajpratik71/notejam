@@ -52,7 +52,7 @@ workflows:
                 - dev
                 - /^feature\/.*/
                 - /^(hot)?fix\/.*/
-      - docker_workflow:
+      - docker_build:
           requires:
             - build
           filters:
