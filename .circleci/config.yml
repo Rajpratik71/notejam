@@ -28,7 +28,7 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-        at: ~/
+          at: ~/
       - aws-ecr/build-image:
           path: .
           account-url: ECR_ACCOUNT_URL
