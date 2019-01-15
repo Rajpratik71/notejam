@@ -71,4 +71,4 @@ workflows:
             - docker_build
           family: 'nodejam'
           cluster-name: 'default-cluster'
-          container-image-name-updates: 'container=nodejam,tag=$CIRCLE_BUILD_NUM'
+          container-image-name-updates: 'container=nodejam,image-and-tag=${ECR_ACCOUNT_URL}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_ECR_REPOSITORY}:version-${CIRCLE_BUILD_NUM}'
