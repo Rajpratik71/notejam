@@ -27,7 +27,6 @@ jobs:
   docker_build:
     machine: true
     steps:
-      - setup_remote_docker
       - attach_workspace:
         at: ~/
       - aws-ecr/build-image:
