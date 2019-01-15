@@ -12,3 +12,7 @@ VOLUME /tmp
 COPY target/*.jar app.jar
 COPY prod.application.properties /
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+
+EXPOSE 8080
+HEALTHCHECK --interval=1m --timeout=5s \
+  CMD curl -f http://localhost:8080/health || exit 1 
