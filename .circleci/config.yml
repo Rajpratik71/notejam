@@ -37,6 +37,7 @@ jobs:
           tag: version-$CIRCLE_BUILD_NUM
       - aws-ecr/push-image:
           account-url: ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPOSITORY
           path: .
           tag: version-$CIRCLE_BUILD_NUM
 
