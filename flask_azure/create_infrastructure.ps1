@@ -11,7 +11,6 @@ $AKSName = "AKSNotejam"
 $SQLserverName = "notejamsql"
 $DBName = "notejamdb"
 $SQLAdminUsn = "notejamadmin"
-$SQLAdminPw = "tempPW1!" # TODO: store encrypted
 
 az login
 
@@ -44,6 +43,7 @@ kubectl create secret docker-registry acrcred --docker-server=$ACRUrl --docker-u
 
 # Create Azure SQL server and DB
 
+$SQLAdminPw = Read-Host -Prompt 'Input SQL server password'
 az sql server create -l $rgLocation -g $rgName -n $SQLserverName -u $SQLAdminUsn -p $SQLAdminPw
 
 # Allow access from all Azure services:
@@ -51,6 +51,6 @@ az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowAzure --
 # Allow access from home: 
 az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowHome --start-ip-address 81.99.111.181 --end-ip-address 81.99.111.181
 # allow access from Kubernetes public IP
-az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowHome --start-ip-address 13.93.71.183 --end-ip-address 13.93.71.183
+az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowKubernetes --start-ip-address 13.93.71.183 --end-ip-address 13.93.71.183
 
 az sql db create -g $rgName -s $SQLserverName -n $DBName --service-objective S0

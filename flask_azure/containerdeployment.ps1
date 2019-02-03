@@ -12,7 +12,7 @@ $AKSName = "AKSNotejam"
 $imageName = 'notejamserver'
 $containerName = 'notejamserver'
 
-cd flask
+cd ../flask
 
 docker build -t $imageName -f server.Dockerfile .
 ### test container locally:
@@ -39,4 +39,4 @@ az aks get-credentials --resource-group $rgName --name $AKSName
 kubectl get nodes
 
 ### deploy stack
-kubectl apply -f notejamflask.yml
+kubectl apply -f ../flask_azure/notejamflask.yml
