@@ -13,7 +13,7 @@ $imageName = 'notejamserver'
 $containerName = 'notejamserver'
 
 
-docker build -t $imageName -f flask/server.Dockerfile .
+docker build -t $imageName -f server.Dockerfile .
 ### test container locally:
 docker run --name $containerName --rm -p 5000:5000 $imageName
 # remove container
