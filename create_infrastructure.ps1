@@ -50,5 +50,7 @@ az sql server create -l $rgLocation -g $rgName -n $SQLserverName -u $SQLAdminUsn
 az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowAzure --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 # Allow access from home: 
 az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowHome --start-ip-address 81.99.111.181 --end-ip-address 81.99.111.181
+# allow access from Kubernetes public IP
+az sql server firewall-rule create -g $rgName -s $SQLserverName -n allowHome --start-ip-address 13.93.71.183 --end-ip-address 13.93.71.183
 
 az sql db create -g $rgName -s $SQLserverName -n $DBName --service-objective S0
