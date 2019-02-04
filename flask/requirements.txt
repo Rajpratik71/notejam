@@ -14,4 +14,3 @@ decorator==3.4.0
 ipython==0.13.1
 sqlalchemy-migrate==0.7.2
 wsgiref==0.1.2
-pyodbc==4.0.25
