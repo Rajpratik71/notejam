@@ -11,9 +11,12 @@ router.get('/', helpers.loginRequired, function(req, res) {
     async.map(notes, function(item, cb) {
       item.getPad(function(err, pad) {
         item.pad = pad;
+        console.log(err);
         return cb(null, item);
       })
     }, function(err, results) {
+      console.log(results);
+      console.log(err);
       res.render(
         'notes/list',
         {title: 'All notes (' + results.length + ')', notes: results}
@@ -32,6 +35,8 @@ router.post('/notes/create', helpers.loginRequired, function(req, res) {
   data['user_id'] = req.user.id;
   req.models.Note.create(data, function(err, message) {
     if (err) {
+      console.log(message);
+      console.log(err);
       res.locals.errors = helpers.formatModelErrors(err);
     } else {
       req.flash(
@@ -50,6 +55,8 @@ router.use('/notes/:id', function(req, res, next) {
     req.models.Note.one(
       {id: req.param('id'), user_id: req.user.id},
       function(err, note) {
+        console.log(note);
+        console.log(err);
         if (note == null) {
           res.send(404);
           return;
@@ -77,6 +84,7 @@ router.get('/notes/:id/edit', helpers.loginRequired, function(req, res) {
 
 router.post('/notes/:id/edit', helpers.loginRequired, function(req, res) {
   req.note.save(req.body, function(err) {
+    console.log(err);
     if (err) {
       res.locals.errors = helpers.formatModelErrors(err);
       res.render('notes/edit', {note: req.note});
@@ -97,6 +105,7 @@ router.get('/notes/:id/delete', helpers.loginRequired, function(req, res) {
 
 router.post('/notes/:id/delete', helpers.loginRequired, function(req, res) {
   req.note.remove(function(err) {
+    console.log(err);
     req.flash(
       'success',
       'Note is successfully deleted'

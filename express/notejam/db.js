@@ -2,7 +2,37 @@ var sqlite3 = require('sqlite3').verbose();
 var async = require('async');
 
 var settings = require('./settings');
-var db = new sqlite3.Database(settings.db);
+
+var env = process.env.NODE_ENV;
+if (!env) {
+  env = 'local'
+}
+
+if (env === 'local') {
+  var db = new sqlite3.Database(settings.db);
+} else {
+  var db = require('mysql').createConnection(settings.dsn);
+// mini sqlite -> mysql conversion driver
+  db.run = function (sql, params, cb) {
+    sql = sql.replace("AUTOINCREMENT", "AUTO_INCREMENT");
+    sql = sql.replace(/default current_timestamp/g, "timestamp default current_timestamp");
+    references = /,([a-z_]+) ([A-Z ]+) REFERENCES ([a-z(]+\))/g;
+    foreignkeys = [];
+    while(match = references.exec(sql)) {
+      foreignkeys.push("FOREIGN KEY (" + match[1] + ") REFERENCES " + match[3]);
+    }
+    if(foreignkeys.length > 0) {
+      sql = sql.replace(/REFERENCES [a-z(]+\)/g, "");
+      sql = sql.replace(");", "," + foreignkeys.join(',') + ");");
+    }
+    this.query(sql, params, cb);
+  };
+  db.close = function (err) {
+    this.end(err);
+    console.log(err);
+  };
+}
+
 
 var functions = {
   createTables: function(next) {
@@ -24,8 +54,8 @@ var functions = {
       createNotes: function(callback) {
         db.run("CREATE TABLE IF NOT EXISTS notes (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-            "pad_id INTEGER REFERENCES pads(id)," +
-            "user_id INTEGER NOT NULL REFERENCES users(id)," +
+            "pad_id INTEGER NULL REFERENCES pads(id)," +
+            "user_id INTEGER NULL REFERENCES users(id)," +
             "name VARCHAR(100) NOT NULL," +
             "text text NOT NULL," +
             "created_at default current_timestamp," +
@@ -34,6 +64,8 @@ var functions = {
       }
     },
     function(err, results) {
+      console.log(results);
+      console.log(err);
       next();
     });
   },
@@ -50,7 +82,6 @@ var functions = {
           db.run("INSERT INTO users VALUES (2, 'user2@example.com', " +
                  "'$2a$10$mhkqpUvPPs.zoRSTiGAEKODOJMljkOY96zludIIw.Pop1UvQCTx8u')", [],
                 function() { callback(null) });
-
         },
         function(callback) {
           db.run("INSERT INTO pads VALUES (1, 'Pad 1', 1)", [],
@@ -69,6 +100,8 @@ var functions = {
                 function() { callback(null) });
         }
       ], function(err, results) {
+        console.log(results);
+        console.log(err);
         next();
       })
     });
@@ -83,22 +116,47 @@ var functions = {
       function(callback) {
         db.run("DELETE FROM notes;", [],
               function() { callback(null) });
-
       },
       function(callback) {
         db.run("DELETE FROM pads;", [],
               function(result) { callback(null); });
       }
     ], function(err, results) {
+      console.log(results);
+      console.log(err);
       next();
     })
-  }
-}
+  },
 
+  removeTables: function(done) {
+    async.series([
+      function(callback) {
+        db.run("DROP TABLE users;", [],
+          function() { callback(null) });
+      },
+      function(callback) {
+        db.run("DROP TABLE notes;", [],
+          function() { callback(null) });
+      },
+      function(callback) {
+        db.run("DROP TABLE pads;", [],
+          function(result) { callback(null); });
+      }
+    ], function(err, results) {
+      console.log(results);
+      console.log(err);
+      done();
+    })
+  }
+};
 
 if (require.main === module) {
   functions.createTables(function() {
     console.log("DB successfully initialized");
+  });
+  functions.applyFixtures(function() {
+    db.close();
+    console.log("Data successfully loaded");
   });
 }
 

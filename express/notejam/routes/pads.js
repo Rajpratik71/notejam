@@ -13,6 +13,8 @@ router.post('/pads/create', helpers.loginRequired, function(req, res) {
   var data = req.body;
   data['user_id'] = req.user.id;
   req.models.Pad.create(data, function(err, message) {
+    console.log(message);
+    console.log(err);
     if (err) {
       res.locals.errors = helpers.formatModelErrors(err);
     } else {
@@ -32,6 +34,8 @@ router.use('/pads/:id', function(req, res, next) {
     req.models.Pad.one(
       {id: req.param('id'), user_id: req.user.id},
       function(err, pad) {
+        console.log(pad);
+        console.log(err);
         if (pad == null) {
           res.send(404);
           return;
@@ -62,6 +66,7 @@ router.get('/pads/:id/edit', helpers.loginRequired, function(req, res) {
 
 router.post('/pads/:id/edit', helpers.loginRequired, function(req, res) {
   req.pad.save({name: req.param('name')}, function(err) {
+    console.log(err);
     if (err) {
       res.locals.errors = helpers.formatModelErrors(err);
       res.render('pads/edit', {pad: req.pad});
@@ -82,6 +87,7 @@ router.get('/pads/:id/delete', helpers.loginRequired, function(req, res) {
 
 router.post('/pads/:id/delete', helpers.loginRequired, function(req, res) {
   req.pad.remove(function(err) {
+    console.log(err);
     req.flash(
       'success',
       'Pad is successfully deleted'

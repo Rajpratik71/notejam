@@ -2,7 +2,6 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var favicon = require('static-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var flash = require('connect-flash');
 var bodyParser = require('body-parser');
@@ -10,11 +9,12 @@ var orm = require('orm');
 var expressValidator = require('express-validator');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var shell = require('shelljs');
 
 var users = require('./routes/users');
 var pads = require('./routes/pads');
 var notes = require('./routes/notes');
-var settings = require('./settings')
+var settings = require('./settings');
 
 var app = express();
 
@@ -24,7 +24,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(favicon());
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(expressValidator());
@@ -37,7 +36,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // DB configuration
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(settings.db);
+
+var env = process.env.NODE_ENV;
+if (!env) {
+  env = 'local'
+}
+
+console.log(process.version);
+
+if (env === "local") {
+  var db = new sqlite3.Database(settings.db);
+  shell.exec('NODE_ENV=local node db.js', function(code, stdout, stderr) {
+  });
+}
+else {
+  var db = require('mysql').createConnection(settings.dsn);
+  console.log("DB_HOST is: " + process.env.DB_HOST);
+  shell.exec('NODE_ENV=prod node db.js', function(code, stdout, stderr) {
+  });
+}
+
 
 orm.settings.set("instance.returnAllErrors", true);
 app.use(orm.express(settings.dsn, {
@@ -46,10 +64,16 @@ app.use(orm.express(settings.dsn, {
       models.User = db.models.users;
       models.Pad = db.models.pads;
       models.Note = db.models.notes;
+      console.log(err);
       next();
     });
   }
 }));
+
+var blacklog = require("./logger");
+
+blacklog.debug("Overriding 'Express' logger");
+app.use(require('morgan')({ "stream": blacklog.stream }));
 
 // Flash Messages configuration
 app.use(function(req, res, next){
@@ -82,6 +106,7 @@ app.use('/', notes);
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
+  console.log(err);
   next(err);
 });
 
@@ -94,6 +119,7 @@ if (app.get('env') === 'development') {
       message: err.message,
       error: err
     });
+    console.log(err);
   });
 }
 
@@ -105,6 +131,7 @@ app.use(function(err, req, res, next) {
     message: err.message,
     error: {}
   });
+  console.log(err);
 });
 
 module.exports = app;

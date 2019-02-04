@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var debug = require('debug')('http')
+var debug = require('debug')('http');
 var orm = require('orm');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -8,7 +8,7 @@ var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 var stubTransport = require('nodemailer-stub-transport');
 
-var helpers = require('../helpers')
+var helpers = require('../helpers');
 var settings = require('../settings');
 
 // Sign Up
@@ -17,11 +17,14 @@ router.get('/signup', function(req, res) {
 });
 
 router.post('/signup', function(req, res) {
+  debug('Body is ' + req.body);
   var data = req.body;
   if (data['password']) {
     data['password'] = generateHash(data['password']);
   };
   req.models.User.create(data, function(err, message) {
+    debug('Message is ' + message);
+    debug('Create Error is ' + err);
     if (err) {
       res.locals.errors = helpers.formatModelErrors(err);
     } else {
