@@ -1,0 +1,78 @@
+version: 2.1
+orbs:
+  aws-ecr: circleci/aws-ecr@1.1.2
+  aws-ecs: circleci/aws-ecs@0.0.4
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8u171-jdk
+    working_directory: ~/project_src/spring
+    steps:
+      - checkout:
+          path: ~/project_src
+      - restore_cache:
+          key: java-spring-{{ checksum "pom.xml" }}
+      - run: mvn verify
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: java-spring-{{ checksum "pom.xml" }}
+      - store_artifacts:
+          path: target/*.jar
+      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
+          path: target/surefire-reports
+      - persist_to_workspace:
+          root: .
+          paths:
+            - target/*.jar
+            - Dockerfile
+            - prod.application.properties
+  docker_build:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: .
+      - aws-ecr/build-image:
+          path: .
+          account-url: ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPOSITORY
+          tag: v-$CIRCLE_SHA1
+      - aws-ecr/ecr-login: {}
+      - aws-ecr/push-image:
+          account-url: ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPOSITORY
+          tag: v-$CIRCLE_SHA1
+      - run: docker tag ${ECR_ACCOUNT_URL}/${AWS_ECR_REPOSITORY}:v-${CIRCLE_SHA1} ${ECR_ACCOUNT_URL}/${AWS_ECR_REPOSITORY}:latest
+      - aws-ecr/push-image:
+          account-url: ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPOSITORY
+          tag: latest
+
+workflows:
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - /^release\/.*/
+                - dev
+                - /^feature\/.*/
+                - /^(hot)?fix\/.*/
+      - docker_build:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - /^release\/.*/
+                - dev
+      - aws-ecs/deploy-service-update:
+          requires:
+            - build
+            - docker_build
+          family: 'nodejam'
+          cluster-name: 'default-cluster'
+          container-image-name-updates: 'container=nodejam,image-and-tag=${ECR_ACCOUNT_URL}/${AWS_ECR_REPOSITORY}:v-${CIRCLE_SHA1}'

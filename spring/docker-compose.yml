@@ -1,0 +1,27 @@
+  version: '3'
+
+  services:
+    app:
+      image: nodejam
+      build:
+        context: .
+      ports:
+        - 8081:8080
+      volumes:
+        - ./prod.application.properties:/application.properties
+    postgres:
+      image: postgres:11.1
+      environment: 
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+    mailcatcher: # https://github.com/mailhog/MailHog
+      image: mailhog/mailhog:latest
+      environment:
+        MH_UI_BIND_ADDR: 0.0.0.0:1080
+        MH_API_BIND_ADDR: 0.0.0.0:1080
+      ports:
+        - 1080:1080
+      deploy:
+        labels:
+          traefik.port: 1080
+          traefik.frontend.rule: Host:mailcatcher.localhost
