@@ -59,6 +59,11 @@ $framework = $app['path.base'].
 
 require $framework.'/Illuminate/Foundation/start.php';
 
+
+// Require Dotenv library
+$dotenv = new Dotenv\Dotenv($app['path.base']);
+$dotenv->load();
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application
