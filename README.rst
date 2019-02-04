@@ -30,6 +30,7 @@ Supported frameworks
 * `CakePHP <https://github.com/komarserjio/notejam/tree/master/cakephp>`_
 * `Nette <https://github.com/komarserjio/notejam/tree/master/nette/native_db>`_ / `Nette + Doctrine <https://github.com/komarserjio/notejam/tree/master/nette/doctrine>`_
 * `Symfony <https://github.com/komarserjio/notejam/tree/master/symfony>`_
+* `CouchCMS <https://www.couchcms.com/docs/advanced-tutorial/>`
 
 **Ruby**
 
