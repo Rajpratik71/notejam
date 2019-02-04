@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   private
 
   def not_found
-    render nothing: true, status: :not_found
+    head :not_found
   end
 
   def order_param
