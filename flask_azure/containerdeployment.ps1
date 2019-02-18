@@ -40,3 +40,4 @@ kubectl get nodes
 
 ### deploy stack
 kubectl apply -f ../flask_azure/notejamflask.yml
+# kubectl delete -f ../flask_azure/notejamflask.yml
