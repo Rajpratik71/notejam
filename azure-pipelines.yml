@@ -13,5 +13,5 @@ variables:
   imageName: 'notejam:$(build.buildId)'
 
 steps:
-- script: docker build -f flask/Dockerfile -t $(imageName) .
+- script: docker build -f flask/Dockerfile -t $(imageName) flask/.
   displayName: 'docker build'
