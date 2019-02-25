@@ -17,5 +17,6 @@ steps:
   displayName: 'docker build'
 - script: docker tag $(imageName) techniumlabs.azurecr.io/$(imageName)
   displayName: 'docker tag'
+- script: docker login -u $(registryUsername) -p $(registryPassword) $(registryUsername).azurecr.io
 - script: docker push techniumlabs.azurecr.io/$(imageName)
   displayName: 'docker push'
