@@ -2,11 +2,11 @@ FROM ruby:2.6
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-      postgresql-client \
+      postgresql-client nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
-    && apt-get install -y nodejs
+# RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    # && apt-get install -y nodejs
 
 WORKDIR /usr/src/app
 COPY Gemfile* ./
