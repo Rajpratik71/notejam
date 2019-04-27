@@ -10,6 +10,5 @@ COPY Gemfile* ./
 RUN bundle install
 COPY . .
 
-RUN bin/rake db:migrate RAILS_ENV=development
 EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["./entrypoint.sh"]
