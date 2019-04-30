@@ -88,7 +88,10 @@
                 "apt-get update -q >/dev/null && apt-get install -q -y filebeat=5.3.0 metricbeat=5.4.1 logstash=1:5.3.0-1 >/dev/null",
 
                 "echo Installing Amazon ES Logstash output plugin... >/dev/null",
-                "/usr/share/logstash/bin/logstash-plugin install /staging/files/logstash-output-amazon_es-2.0.0.gem"
+                "/usr/share/logstash/bin/logstash-plugin install /staging/files/logstash-output-amazon_es-2.0.0.gem",
+
+                "echo Adding Logstash to the \"adm\" group so it will be allowed to read Apache logs...",
+                "usermod -a -G adm logstash"
             ]
         }
     ]
