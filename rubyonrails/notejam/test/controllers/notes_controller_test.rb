@@ -87,4 +87,12 @@ class NotesControllerTest < ActionController::TestCase
     get :index
     assert_response :success
   end
+
+  test 'this test should fail' do
+    assert_response :success
+    post :create, note: { name: 'failed test note', text: 'text' }
+    assert_difference('Note.count') do
+      post :create, note: { name: 'failed test note', text: 'text', pad_id: 0 }
+    end
+  end
 end
