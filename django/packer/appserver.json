@@ -41,14 +41,14 @@
         {
             "type": "shell",
             "inline": [
-                "sudo mkdir -p /app/{{user `app_name`}} /run/staging",
-                "sudo chown ubuntu:ubuntu /app/{{user `app_name`}} /run/staging"
+                "sudo mkdir -p /app/{{user `app_name`}} /staging",
+                "sudo chown ubuntu:ubuntu /app/{{user `app_name`}} /staging"
             ]
         },
         {
             "type": "file",
             "source": "files",
-            "destination": "/run/staging"
+            "destination": "/staging"
         },
         {
             "type": "file",
@@ -69,7 +69,7 @@
                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz",
 
                 "echo Configuring Apache... >/dev/null",
-                "cp /run/staging/files/notejam.vhost /etc/apache2/sites-available/000-default.conf",
+                "cp /staging/files/notejam.vhost /etc/apache2/sites-available/000-default.conf",
                 "sed -i 's|^Listen 80$|Listen 8080|' /etc/apache2/ports.conf",
                 "systemctl restart apache2",
 
@@ -80,7 +80,7 @@
                 "systemctl restart varnish",
 
                 "echo Wating for app to be up... >/dev/null",
-                "bash /run/staging/files/wait.sh localhost:80",
+                "bash /staging/files/wait.sh localhost:80",
 
                 "echo Installing Filebeat and Logstash... >/dev/null",
                 "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -",
@@ -88,7 +88,7 @@
                 "apt-get update -q >/dev/null && apt-get install -q -y filebeat=5.3.0 metricbeat=5.4.1 logstash=1:5.3.0-1 >/dev/null",
 
                 "echo Installing Amazon ES Logstash output plugin... >/dev/null",
-                "/usr/share/logstash/bin/logstash-plugin install /run/staging/files/logstash-output-amazon_es-2.0.0.gem"
+                "/usr/share/logstash/bin/logstash-plugin install /staging/files/logstash-output-amazon_es-2.0.0.gem"
             ]
         }
     ]
