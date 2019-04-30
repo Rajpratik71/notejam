@@ -63,7 +63,7 @@
                 "echo Updating apt and installing packages... >/dev/null",
                 "export DEBIAN_FRONTEND=noninteractive",
                 "apt-get update -q >/dev/null",
-                "apt-get install -q -y apache2 libapache2-mod-wsgi varnish python python-pip openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
+                "apt-get install -q -y apache2 libapache2-mod-wsgi default-libmysqlclient-dev varnish python python-pip openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
 
                 "echo Installing Cfn Helper Scripts... >/dev/null",
                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz",
