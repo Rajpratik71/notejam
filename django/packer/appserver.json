@@ -63,7 +63,7 @@
                 "echo Updating apt and installing packages... >/dev/null",
                 "export DEBIAN_FRONTEND=noninteractive",
                 "apt-get update -q >/dev/null",
-                "apt-get install -q -y apache2 libapache2-mod-wsgi varnish python python-pip openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
+                "apt-get install -q -y apache2 libapache2-mod-wsgi varnish python python-pip heat-cfntools openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
 
                 "echo Configuring Apache... >/dev/null",
                 "cp /run/staging/files/notejam.vhost /etc/apache2/sites-available/000-default.conf",
