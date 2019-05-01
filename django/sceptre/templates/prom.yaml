@@ -1,0 +1,196 @@
+
+---
+Description: Launch Prometheus/Grafana
+
+Parameters:
+  AppName:
+    Type: String
+    Default: notejam
+    Description: >
+      Application name
+      Must match the folder name the app resides in inside the Git repo
+  AmiId:
+    Type: String
+    Default: ami-08d658f84a6d84a80
+    Description: >
+      Id of the base AMI to use
+      Example: ami-08d658f84a6d84a80 (ubuntu-bionic-18.04-amd64-server-20190212.1)
+  InstanceType:
+    Type: String
+    Default: t2.medium
+    Description: >
+      Instance Type to use for Management/CI Instance
+      Example: t2.medium
+  SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    ConstraintDescription: must be the name of an existing security group id
+    Description: Id of an existing security group
+  IamInstanceProfile:
+    Type: String
+    Description: Iam Instance Profile to attach to the instance
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+  SubnetIds:
+    Type: CommaDelimitedList
+    ConstraintDescription: must be a comma separated list of existing Subnet Ids
+    Description: >
+      Comma separated list of existing Subnet Ids belonging to the VPC specified above
+      Example: subnet-XXXXXXXX,subnet-XXXXXXXX,subnet-XXXXXXXX
+  HostedZoneName:
+    Type: String
+    Default: disabled
+    Description: >
+      Route53 Hosted Zone name of an existing Route53 Hosted Zone that is resolvable from the Internet
+      If set to something other than "disabled" Route53 records will be configured
+      Do not add a trailing dot
+      Example: mydomain.com
+
+Conditions:
+  HostedZoneNameProvided: !Not [ !Equals [ !Ref HostedZoneName, "disabled" ] ]
+
+Resources:
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      SubnetId: !Select [ 0, !Ref SubnetIds ]
+      SecurityGroupIds:
+      - !Ref SecurityGroupId
+      IamInstanceProfile: !Ref IamInstanceProfile
+      ImageId: !Ref AmiId
+      InstanceType: !Ref InstanceType
+      Monitoring: true
+      Tags:
+      - Key: Name
+        Value: !Join [ "", [ !Ref AppName, "-prom" ] ]
+      UserData:
+        "Fn::Base64":
+          !Sub
+            - |
+                #cloud-config
+                write_files:
+                  - content: |
+                      # global config
+                      global:
+                        scrape_interval: 15s
+                        evaluation_interval: 15s
+                      scrape_configs:
+                        - job_name: 'prometheus'
+                          static_configs:
+                            - targets: ['localhost:9090']
+                        - job_name: 'notejam-app'
+                          ec2_sd_configs:
+                            - region: eu-west-1
+                              port: 9100 # node-exporter
+                            - region: eu-west-1
+                              port: 9131 # varnish-exporter
+                            - region: eu-west-1
+                              port: 9117 # apache-exporter
+                          relabel_configs:
+                            - source_labels: [__meta_ec2_tag_Name]
+                              regex: notejam-app
+                              action: keep
+                    path: /app/prometheus.yml
+                  - content: |
+                      ##################### Grafana Configuration Overrides #####################
+                      #
+                      # Add settings here to override Grafana defaults
+                      #
+                    path: /app/grafana.ini
+                  - content: |
+                      apiVersion: 1
+                      datasources:
+                        - name: Prometheus
+                          type: prometheus
+                          is_default: true
+                          access: proxy
+                          url: http://prometheus:9090
+                    path: /app/datasource.yml
+                  - content: |
+                      - name: 'default'       # name of this dashboard configuration (not dashboard itself)
+                        org_id: 1             # id of the org to hold the dashboard
+                        folder: ''            # name of the folder to put the dashboard (http://docs.grafana.org/v5.0/reference/dashboard_folders/)
+                        type: 'file'          # type of dashboard description (json files)
+                        options:
+                          folder: '/var/lib/grafana/dashboards'       # where dashboards are
+                    path: /app/dashboard.yml
+                  - content: |
+                      version: "3.1"
+                      services:
+                        prometheus:
+                          image: prom/prometheus
+                          container_name: prometheus
+                          volumes:
+                            - /app/prometheus.yml:/etc/prometheus/prometheus.yml
+                          ports:
+                            - "9090:9090"
+                        grafana:
+                          image: grafana/grafana
+                          container_name: grafana
+                          ports:
+                            - "3000:3000"
+                          volumes:
+                            - /app/grafana.ini:/etc/grafana/grafana.ini
+                            - /app/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+                            - /app/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+                            - /app/dashboards/:/var/lib/grafana/dashboards/
+                          links:
+                            - prometheus
+                    path: /app/docker-compose.yml
+                packages:
+                - docker.io
+                - docker-compose
+                - prometheus-node-exporter
+                bootcmd:
+                # Will run at every boot, as soon as possible, before rc.local
+                - echo "No configured bootcmd to run..."
+                runcmd:
+                # Will run only once, around the same time as rc.local
+                - set -xe
+                - cd /app
+                - mkdir -p dashboards
+                - wget https://grafana.com/api/dashboards/9903/revisions/1/download -O dashboards/varnish.json
+                - sed -i 's|${!DS_PROMETHEUS}|Prometheus|g' dashboards/varnish.json
+                - sed -i 's|DS_PROMETHEUS|Prometheus|g' dashboards/varnish.json
+                - wget https://grafana.com/api/dashboards/3894/revisions/5/download -O dashboards/apache.json
+                - sed -i 's|${!DS_LOCALHOST}|Prometheus|g' dashboards/apache.json
+                - sed -i 's|DS_LOCALHOST|Prometheus|g' dashboards/apache.json
+                - docker-compose up -d
+                - timeout 60 sh -c 'until curl -m 5 -s --fail --location localhost:9090 >/dev/null; do sleep 1; done'
+                - timeout 60 sh -c 'until curl -m 5 -s --fail --location localhost:3000 >/dev/null; do sleep 1; done'
+                
+                - echo SUCCESS - System is up, Prometheus/Grafana configuration finished after $UPTIME seconds
+                final_message: |
+                  Use Ctrl + c to exit
+            - { JoinedSubnetIds: !Join [ ",", !Ref SubnetIds ] }
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref Instance
+
+  Route53RecordSet:
+    Condition: HostedZoneNameProvided
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Join [ "", [ !Ref HostedZoneName, "." ] ]
+      Comment: Pretty DNS Record
+      Name: !Join [ "", [ !Ref AppName, "-prom.", !Ref HostedZoneName, "." ] ]
+      Type: A
+      TTL: '600'
+      ResourceRecords:
+      - !Ref EIP
+
+Outputs:
+  PROMInstanceId:
+    Value: !Ref Instance
+  PROMPublicIp:
+    Value: !GetAtt Instance.PublicIp
+  PROMInstancePublicDnsName:
+    Value: !GetAtt Instance.PublicDnsName
+  PROMRoute53RecordSet:
+    Condition: HostedZoneNameProvided
+    Value: !Ref Route53RecordSet

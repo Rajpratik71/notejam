@@ -41,7 +41,7 @@ Resources:
       DBClusterIdentifier: !Ref AWS::StackName
       ScalingConfiguration:
         AutoPause: true
-        MaxCapacity: 16
+        MaxCapacity: 64
         MinCapacity: 2
         SecondsUntilAutoPause: 300
       DBSubnetGroupName:

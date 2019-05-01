@@ -1,0 +1,16 @@
+[Unit]
+Description=Prometheus Varnish Exporter
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+StartLimitInterval=600
+StartLimitBurst=50
+
+SyslogIdentifier=prometheus_varnish_exporter
+ExecStart=/usr/local/bin/prometheus_varnish_exporter -no-exit
+
+[Install]
+WantedBy=multi-user.target

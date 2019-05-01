@@ -64,7 +64,7 @@
                 "echo Updating apt and installing packages... >/dev/null",
                 "export DEBIAN_FRONTEND=noninteractive",
                 "apt-get update -q >/dev/null",
-                "apt-get install -q -y apache2 libapache2-mod-wsgi default-libmysqlclient-dev varnish python python-pip openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
+                "apt-get install -q -y apache2 libapache2-mod-wsgi default-libmysqlclient-dev varnish python python-pip prometheus-node-exporter prometheus-apache-exporter openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
 
                 "echo Installing Cfn Helper Scripts... >/dev/null",
                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz",
@@ -82,6 +82,16 @@
 
                 "echo Wating for app to be up... >/dev/null",
                 "bash /staging/files/wait.sh localhost:80",
+
+                "echo Installing Prometheus Varnish Exporter... >/dev/null",
+                "cd /staging",
+                "wget -q https://github.com/jonnenauha/prometheus_varnish_exporter/releases/download/1.4.1/prometheus_varnish_exporter-1.4.1.linux-amd64.tar.gz",
+                "tar -xf prometheus_varnish_exporter-*.tar.gz",
+                "rm prometheus_varnish_exporter-*.tar.gz",
+                "mv prometheus_varnish_exporter-*/prometheus_varnish_exporter /usr/local/bin/prometheus_varnish_exporter",
+                "chmod +x /usr/local/bin/prometheus_varnish_exporter",
+                "cp /staging/files/prometheus-varnish-exporter.service /etc/systemd/system",
+                "cd -",
 
                 "echo Installing Filebeat and Logstash... >/dev/null",
                 "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -",

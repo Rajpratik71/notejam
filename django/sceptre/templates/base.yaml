@@ -102,7 +102,7 @@ Resources:
           - sts:AssumeRole
       Path: "/"
       Policies:
-      - PolicyName: ES-access
+      - PolicyName: es-access
         PolicyDocument:
           Statement:
           - Action:
@@ -121,6 +121,35 @@ Resources:
       Path: "/"
       Roles:
       - !Ref APPIamRole
+
+  PROMIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: ec2-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - ec2:DescribeInstances
+            Effect: Allow
+            Resource:
+            - "*"
+
+  PROMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref PROMIamRole
 
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -153,3 +182,5 @@ Outputs:
     Value: !Ref CIInstanceProfile
   APPIamInstanceProfile:
     Value: !Ref APPInstanceProfile
+  PROMIamInstanceProfile:
+    Value: !Ref PROMInstanceProfile

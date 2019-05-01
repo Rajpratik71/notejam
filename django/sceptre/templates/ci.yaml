@@ -35,7 +35,7 @@ Parameters:
     Type: CommaDelimitedList
     ConstraintDescription: must be a comma separated list of existing Subnet Ids
     Description: >
-      Comma separated list of existing Subnet Ids belonging to the VPC specified above
+      Comma separated list of existing Subnet Ids 
       Example: subnet-XXXXXXXX,subnet-XXXXXXXX,subnet-XXXXXXXX
   HostedZoneName:
     Type: String
