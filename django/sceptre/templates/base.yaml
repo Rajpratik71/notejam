@@ -81,6 +81,14 @@ Resources:
             Effect: Allow
             Resource:
             - "*"
+      - PolicyName: route53-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - route53:ListHostedZones
+            Effect: Allow
+            Resource:
+            - "*"
 
   CIInstanceProfile:
     Type: AWS::IAM::InstanceProfile
