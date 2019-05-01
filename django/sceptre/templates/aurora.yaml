@@ -1,0 +1,60 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Launch Aurora serverless cluster
+
+Parameters:
+  DatabaseName:
+    Type: String
+  EngineVersion:
+    Type: String
+    Default: "5.6"
+  MasterUsername:
+    Type: String
+    Default: root
+  MasterUserPassword:
+    Type: String
+    NoEcho: true
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  SubnetIds:
+    Type: CommaDelimitedList
+  VpcSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: CloudFormation managed DB subnet group.
+      SubnetIds: !Ref SubnetIds
+
+  DBCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora
+      EngineMode: serverless
+      EngineVersion: !Ref EngineVersion
+      DatabaseName: !Ref DatabaseName
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      DBClusterIdentifier: !Ref AWS::StackName
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 16
+        MinCapacity: 2
+        SecondsUntilAutoPause: 300
+      DBSubnetGroupName:
+        Ref: DBSubnetGroup
+      BackupRetentionPeriod: 30
+      DeletionProtection: true
+      VpcSecurityGroupIds:
+      - !Ref VpcSecurityGroupId
+
+Outputs:
+  DBHost:
+    Value: !GetAtt DBCluster.Endpoint.Address
+  DBName:
+    Value: !Ref DatabaseName
+  DBUser:
+    Value: !Ref MasterUsername

@@ -1,0 +1,23 @@
+template_path: templates/app.yaml
+parameters:
+  AppName: notejam
+  AmiId: !environment_variable SCEPTRE_APP_SERVER_AMI_ID
+  InstanceType: t2.medium
+  MinServerCount: "1"
+  MaxServerCount: "10"
+  ScaleUpPercentAdjustment: "10"
+  ScaleUpCpuThreshold: "70"
+  ScaleUpEvalCycles: "1"
+  ScaleDownPercentAdjustment: "-10"
+  ScaleDownCpuThreshold: "30"
+  ScaleDownEvalCycles: "10"
+  SecurityGroupId: !stack_output base::SecurityGroupId
+  IamInstanceProfile: !stack_output base::APPIamInstanceProfile
+  KeyName: !environment_variable SCEPTRE_KEY_NAME
+  SubnetIds: !environment_variable SCEPTRE_SUBNET_IDS
+  HostedZoneName: !environment_variable SCEPTRE_HOSTED_ZONE_NAME
+  DBHost: !stack_output aurora::DBHost
+  DBName: !stack_output aurora::DBName
+  DBUser: !stack_output aurora::DBUser
+  DBPassword: !environment_variable SCEPTRE_DB_PASSWORD
+  ESEndpoint: !stack_output es::ESDomainEndpoint

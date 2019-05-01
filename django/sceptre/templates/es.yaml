@@ -1,0 +1,98 @@
+---
+Description: Launch ES
+
+Parameters:
+  AppName:
+    Type: String
+    Default: notejam
+    Description: >
+      Application name
+      Must match the folder name the app resides in inside the Git repo
+  HostedZoneName:
+    Type: String
+    Default: disabled
+    Description: >
+      Route53 Hosted Zone name of an existing Route53 Hosted Zone that is resolvable from the Internet
+      If set to something other than "disabled" Route53 records will be configured
+      Do not add a trailing dot
+      Example: mydomain.com
+  ManagementAccessFrom:
+    Type: String
+    Description: >
+      Cidr Block from which to allow management access to the enviroment
+      Example: 10.1.2.3/32
+  InstanceCount:
+    Type: String
+    Default: 1
+    Description: Number of instances
+  InstanceType:
+    Type: String
+    Default: m3.medium.elasticsearch
+    Description: Type of instances
+  VolumeSize:
+    Type: String
+    Default: 100
+    Description: Ebs Disk size to use
+
+Conditions:
+  HostedZoneNameProvided: !Not [ !Equals [ !Ref HostedZoneName, "disabled" ] ]
+
+Resources:
+  ElasticsearchDomain: 
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: !Join [ "", [ !Ref AppName, "-es" ] ]
+      ElasticsearchVersion: 5.1
+      ElasticsearchClusterConfig: 
+        DedicatedMasterEnabled: "false"
+        InstanceCount: !Ref InstanceCount
+        InstanceType: !Ref InstanceType
+        ZoneAwarenessEnabled: "false"
+      EBSOptions: 
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: !Ref VolumeSize
+        VolumeType: "gp2"
+      SnapshotOptions: 
+        AutomatedSnapshotStartHour: "6"
+      AccessPolicies:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS:
+            - !Join [ "", [ "arn:aws:iam::", !Ref "AWS::AccountId", ":root" ] ]
+          Action: es:*
+          Resource: 
+          - !Join [ "", [ "arn:aws:es:", !Ref "AWS::Region", ":", Ref: "AWS::AccountId", ":domain/", !Ref AppName, "-es", "/*" ] ]
+        - Effect: Allow
+          Principal:
+            AWS: "*"
+          Action: es:*
+          Resource:
+          - !Join [ "", [ "arn:aws:es:", !Ref "AWS::Region", ":", Ref: "AWS::AccountId", ":domain/", !Ref AppName, "-es", "/*" ] ]
+          Condition:
+            IpAddress:
+              aws:SourceIp:
+              - !Ref ManagementAccessFrom
+      AdvancedOptions: 
+        rest.action.multi.allow_explicit_index: "true"
+
+  Route53RecordSet:
+    Condition: HostedZoneNameProvided
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Join [ "", [ !Ref HostedZoneName, "." ] ]
+      Comment: Pretty DNS Record
+      Name: !Join [ "", [ !Ref AppName, "-es.", !Ref HostedZoneName, "." ] ]
+      Type: CNAME
+      TTL: '600'
+      ResourceRecords:
+        - !GetAtt ElasticsearchDomain.DomainEndpoint
+
+Outputs:
+  ESDomainEndpoint:
+    Value: !GetAtt ElasticsearchDomain.DomainEndpoint
+  ESRoute53RecordSet:
+    Condition: HostedZoneNameProvided
+    Value: !Ref Route53RecordSet

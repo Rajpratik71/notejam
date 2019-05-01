@@ -1,0 +1,5 @@
+template_path: templates/base.yaml
+parameters:
+  VpcId: !environment_variable SCEPTRE_VPC_ID
+  ManagementAccessFrom: !environment_variable SCEPTRE_MANAGEMENT_ACCESS_FROM
+  ApplicationAccessFrom: !environment_variable SCEPTRE_APPLICATION_ACCESS_FROM
