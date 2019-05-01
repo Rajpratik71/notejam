@@ -91,8 +91,9 @@
                 "echo Installing Amazon ES Logstash output plugin... >/dev/null",
                 "/usr/share/logstash/bin/logstash-plugin install /staging/files/logstash-output-amazon_es-2.0.0.gem",
 
-                "echo Adding Logstash to the \"adm\" group so it will be allowed to read Apache logs...",
-                "usermod -a -G adm logstash"
+                "echo Adding Logstash to the \"adm\" and \"varnish\" groups so it will be allowed to read logs...",
+                "usermod -a -G adm logstash",
+                "usermod -a -G varnish logstash"
             ]
         }
     ]
