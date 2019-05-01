@@ -153,7 +153,7 @@ Resources:
                                              cd ../packer
                                              packer build -var "source_ami=${AmiId}" \
                                                           -var "app_name=${AppName}" \
-                                                          -var "subnet_id=subnet-60a77017" \
+                                                          -var "subnet_id=${FirstSubnetId}" \
                                                           -var "commit=$(git rev-parse --short HEAD)" \
                                                           appserver.json | tee /tmp/jenkins_packer_output
                                              artifact=$(cat /tmp/jenkins_packer_output | grep -E 'ami-[0-9a-z]{17}' | tail -n1 | awk '{print $2}')
@@ -203,7 +203,7 @@ Resources:
                 - echo SUCCESS - System is up, CI configuration finished after $UPTIME seconds
                 final_message: |
                   Use Ctrl + c to exit
-            - { JoinedSubnetIds: !Join [ ",", !Ref SubnetIds ] }
+            - { FirstSubnetId: !Select [ 0, !Ref SubnetIds ], JoinedSubnetIds: !Join [ ",", !Ref SubnetIds ] }
 
   EIP:
     Type: AWS::EC2::EIP
