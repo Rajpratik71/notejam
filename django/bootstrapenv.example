@@ -1,0 +1,43 @@
+# Name of the awscli profile to use for provisioning
+# https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+#export AWS_PROFILE="myprofile"
+
+# Name of an existing EC2 KeyPair to enable SSH access to the instance
+# The SSh private key needs to be added to the ssh agent
+# so that you can SSh to an instance without specifying the path to the key.
+# Use "ssh-add path/to/myprivatekey.pem" to add the key named "myprivatekey"
+#export SCEPTRE_KEY_NAME="myprivatekey"
+
+# Id of an existing VPC
+# Ids can be long or short
+# Long: vpc-XXXXXXXXXXXXXXXXX
+# Short: vpc-XXXXXXXX
+#export SCEPTRE_VPC_ID="vpc-XXXXXXXX"
+
+# Comma separated list of existing Subnet Ids belonging to the VPC specified above
+# At least two subnets need to be specified for Aurora stack creation to succeed
+# Ids can be long or short
+# Long: subnet-XXXXXXXXXXXXXXXXX
+# Short: subnet-XXXXXXXX
+#export SCEPTRE_SUBNET_IDS="subnet-XXXXXXXX,subnet-XXXXXXXX,subnet-XXXXXXXX"
+
+# Cidr Block from which to allow access to the application
+# Restrict this if you don't want the application to be public
+#export SCEPTRE_APPLICATION_ACCESS_FROM="0.0.0.0/0"
+
+# Cidr Block from which to allow management access to the enviroment
+# Anybody with an IP contained in the following block will have access to all management interfaces
+#export SCEPTRE_MANAGEMENT_ACCESS_FROM="10.1.2.3/32"
+
+# Route53 Hosted Zone name of an existing Route53 Hosted Zone that is resolvable from the Internet
+# If set to something other than "disabled" Route53 records will be configured
+# Do not add a trailing dot
+#export SCEPTRE_HOSTED_ZONE_NAME="mydomain.com"
+
+# Database password to use for provisioning Aurora
+#export SCEPTRE_DB_PASSWORD="SuperSecureUniquePasswordWithNumbersAndSymbols!!!"
+
+# Ami Id to use for provisioning the Application server cluster
+# You NOT need to set this when first provisioning the environment
+# Configure this if you need to rollback to a certain AMI that has already been built by the CI
+#export SCEPTRE_APP_SERVER_AMI_ID=ami-XXXXXXXXXXXXXXXXX

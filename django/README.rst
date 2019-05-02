@@ -79,3 +79,29 @@ Always prepend your commits with framework name:
     Django: Implemented sign in functionality
 
 Read `contribution guide <https://github.com/komarserjio/notejam/blob/master/contribute.rst>`_ for details.
+
+
+===========================
+Bootstrap AWS environment
+===========================
+
+------------
+Install Sceptre
+------------
+Install Sceptre version 1.3.4 via Pip
+
+.. code-block:: bash
+    $ pip install sceptre==1.3.4
+
+
+--------------------
+Configure environment
+--------------------
+Copy bootstrapenv.example to bootstrapenv and configure the environment variables as described in the file
+
+
+---------------
+Run bootstrap.sh
+---------------
+.. code-block:: bash
+    $ ./bootstrap.sh
