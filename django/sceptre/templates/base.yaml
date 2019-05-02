@@ -85,7 +85,7 @@ Resources:
         PolicyDocument:
           Statement:
           - Action:
-            - route53:ListHostedZones
+            - route53:*
             Effect: Allow
             Resource:
             - "*"

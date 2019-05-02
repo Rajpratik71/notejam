@@ -21,6 +21,9 @@ Parameters:
     Type: CommaDelimitedList
   VpcSecurityGroupId:
     Type: AWS::EC2::SecurityGroup::Id
+  DeletionProtection:
+    Type: String
+    Default: "false"
 
 Resources:
   DBSubnetGroup:
@@ -47,7 +50,7 @@ Resources:
       DBSubnetGroupName:
         Ref: DBSubnetGroup
       BackupRetentionPeriod: 30
-      DeletionProtection: true
+      DeletionProtection: !Ref DeletionProtection
       VpcSecurityGroupIds:
       - !Ref VpcSecurityGroupId
 

@@ -7,3 +7,4 @@ parameters:
   VpcId: !environment_variable SCEPTRE_VPC_ID
   SubnetIds: !environment_variable SCEPTRE_SUBNET_IDS
   VpcSecurityGroupId: !stack_output base::SecurityGroupId
+  DeletionProtection: "false"
