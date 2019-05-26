@@ -1,0 +1,163 @@
+service: notejam-vpc-service
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: "${opt:stage, 'dev'}"
+  region: "eu-west-1"
+  stackTags:
+    Project: "notejam"
+
+custom:
+  VpcCIDR: "172.17.0.0/16"
+  PublicSubnetACIDR: "172.17.10.0/24"
+  PublicSubnetBCIDR: "172.17.11.0/24"
+  PublicSubnetCCIDR: "172.17.12.0/24"
+  PrivateSubnetACIDR: "172.17.20.0/24"
+  PrivateSubnetBCIDR: "172.17.21.0/24"
+  PrivateSubnetCCIDR: "172.17.22.0/24"
+
+resources:
+  Conditions:
+    DevStageCondition:
+      Fn::Equals:
+      - "dev"
+      - "${self:provider.stage}"
+
+  Resources:
+    VPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: "${self:custom.VpcCIDR}"
+        EnableDnsSupport: True
+        EnableDnsHostnames: True
+        Tags:
+        - Key: Name
+          Value: "Notejam-VPC"
+
+    PublicSubnetA:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone:
+          Fn::Select:
+            - 0
+            - Fn::GetAZs: ''
+        CidrBlock: "${self:custom.PublicSubnetACIDR}"
+        MapPublicIpOnLaunch: True
+        Tags:
+        - Key: Name
+          Value: "Public Subnet (AZ1)"
+        VpcId:
+          Ref: VPC
+
+    PublicSubnetB:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone:
+          Fn::Select:
+            - 1
+            - Fn::GetAZs: ''
+        CidrBlock: "${self:custom.PublicSubnetBCIDR}"
+        MapPublicIpOnLaunch: True
+        Tags:
+        - Key: Name
+          Value: "Public Subnet (AZ2)"
+        VpcId:
+          Ref: VPC
+
+    PublicSubnetC:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone:
+          Fn::Select:
+            - 2
+            - Fn::GetAZs: ''
+        CidrBlock: "${self:custom.PublicSubnetCCIDR}"
+        MapPublicIpOnLaunch: True
+        Tags:
+          - Key: Name
+            Value: "Public Subnet (AZ3)"
+        VpcId:
+          Ref: VPC
+
+    PrivateSubnetA:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone:
+          Fn::Select:
+            - 0
+            - Fn::GetAZs: ''
+        CidrBlock: "${self:custom.PrivateSubnetACIDR}"
+        MapPublicIpOnLaunch: False
+        Tags:
+          - Key: Name
+            Value: "Private Subnet (AZ1)"
+        VpcId:
+          Ref: VPC
+
+    PrivateSubnetB:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone:
+          Fn::Select:
+            - 1
+            - Fn::GetAZs: ''
+        CidrBlock: "${self:custom.PrivateSubnetBCIDR}"
+        MapPublicIpOnLaunch: False
+        Tags:
+          - Key: Name
+            Value: "Private Subnet (AZ2)"
+        VpcId:
+          Ref: VPC
+
+    PrivateSubnetC:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone:
+          Fn::Select:
+            - 2
+            - Fn::GetAZs: ''
+        CidrBlock: "${self:custom.PrivateSubnetCCIDR}"
+        MapPublicIpOnLaunch: False
+        Tags:
+          - Key: Name
+            Value: "Private Subnet (AZ3)"
+        VpcId:
+          Ref: VPC
+
+  Outputs:
+    VPC:
+      Description: A reference to the notejam VPC
+      Value:
+        Ref: VPC
+      Export:
+        Name: "notejam-VPC-${self:provider.stage}"
+
+    notejamDefaultSG:
+      Description: The default security group for the notejam VPC.
+      Value:
+        Fn::GetAtt: [VPC, DefaultSecurityGroup]
+      Export:
+        Name: "notejam-Default-SG-${self:provider.stage}"
+
+    PublicSubnets:
+      Description: Reference to all public subnets.
+      Value:
+        Fn::Join:
+          - ","
+          - - Ref: PublicSubnetA
+            - Ref: PublicSubnetB
+            - Ref: PublicSubnetC
+      Export:
+        Name: "notejam-Public-Subnets-${self:provider.stage}"
+
+    PrivateSubnets:
+      Description: Reference to all private subnets.
+      Value:
+        Fn::Join:
+          - ","
+          - - Ref: PrivateSubnetA
+            - Ref: PrivateSubnetB
+            - Ref: PrivateSubnetC
+      Export:
+        Name: "notejam-Private-Subnets-${self:provider.stage}"
