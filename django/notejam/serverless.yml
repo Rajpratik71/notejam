@@ -44,8 +44,13 @@ package:
 
 functions:
   app:
+    name: notejam-${self:provider.stage}
     handler: wsgi_handler.handler
     timeout: 15
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+  initdb:
+    name: notejam-initdb-${self:provider.stage}
+    timeout: 40
+    handler: create_db.handle

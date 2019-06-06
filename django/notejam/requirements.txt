@@ -1,5 +1,4 @@
 Django==1.11.20
-zappa-django-utils
 djangorestframework
 whitenoise
 boto3

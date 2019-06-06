@@ -1,8 +1,4 @@
-import logging
 import os
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from logging import getLogger
-from sys import stdout
 
 DEBUG = True
 STAGE = 'dev'
@@ -15,17 +11,6 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'notejam.db',
-#         'USER': '',
-#         'PASSWORD': '',
-#         'HOST': '',
-#         'PORT': '',
-#     }
-# }
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -79,8 +64,7 @@ STATICFILES_DIRS = (
 # various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
 )
 
 # Make this unique, and don't share it with anybody.
@@ -133,7 +117,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'zappa_django_utils',
     'rest_framework',
     'pads',
     'notes',
@@ -205,13 +188,6 @@ IS_OFFLINE = os.environ.get('LAMBDA_TASK_ROOT') is None
 #         }
 #     }
 # else:
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'zappa_django_utils.db.backends.s3sqlite',
-    #         'NAME': 'sqlite.db',
-    #         'BUCKET': SQLITE_BUCKET
-    #     }
-    # }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

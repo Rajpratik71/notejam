@@ -52,7 +52,7 @@ bower_components
 #.phar archives
 *.phar
 
-.venv/
+venv/
 .idea/
 
 # Serverless

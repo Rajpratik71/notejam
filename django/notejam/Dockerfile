@@ -1,4 +1,5 @@
 FROM amazonlinux:2017.03
+ENV LANG=en_US.UTF-8
 RUN yum -y install git \
     python36 \
     python36-pip \
