@@ -11,6 +11,6 @@ export LAMBDA_TASK_ROOT=/home
 cp ./include/libmysqlclient.so.18 .
 sls deploy
 # Wait for Lambda coldstart
-sleep 10
+sleep 20
 sls invoke -f initdb -s dev -l
 rm libmysqlclient.so.18
