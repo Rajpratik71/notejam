@@ -46,7 +46,7 @@ functions:
   app:
     name: notejam-${self:provider.stage}
     handler: wsgi_handler.handler
-    timeout: 15
+    timeout: 40
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
