@@ -1,0 +1,29 @@
+
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /opt/app/flask
+hooks:
+  ApplicationStop:
+    - location: aws_codedeploy/stop_server.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: aws_codedeploy/install_dependencies.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: aws_codedeploy/start_server.sh
+      timeout: 300
+      runas: root
+  VerifyService:
+    - location: aws_codedeploy/sanity_test.sh
+      timeout: 300
+      runas: root
+    - location: aws_codedeploy/performance_regression.sh
+      timeout: 300
+      runas: root
+    - location: aws_codedeploy/sanity_test.sh
+      timeout: 300
+      runas: root

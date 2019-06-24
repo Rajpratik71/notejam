@@ -265,3 +265,17 @@ def _generate_password(user):
         )
     )
     return m.hexdigest()[:8]
+
+
+@app.route('/status', methods=['GET'])
+def status():
+    ''' Application health check endpoint.'''
+    try:
+        # Check for database connection
+        db.session.query("1").from_statement("SELECT 1").all()
+        app.logger.debug("HealthCheck - Database connection is OK!")
+    except:
+        app.logger.critical("HealthCheck - Application is down! Was not possible to connect to DB!!!")
+        return "Not OK!", 503
+
+    return "Ivan - OK!", 200
