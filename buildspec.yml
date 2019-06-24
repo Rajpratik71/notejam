@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - cd laravel/notejam
+      - composer install --no-interaction --prefer-dist
+      - touch app/database/notejam.db
+      - php artisan migrate
+      - ./vendor/bin/phpunit --verbose
+artifacts:
+  base-directory: laravel/notejam
+  files:
+    - 'bootstrap/**/*'
+    - 'public/**/*'
+    - 'app/**/*'
+    - '.ebextensions/**/*'
+    - 'artisan'
+    - '*.*'
+    - '.*'

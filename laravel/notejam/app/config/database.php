@@ -1,5 +1,7 @@
 <?php
 
+$isProd = isset($_SERVER['AWS_ENV']) && ($_SERVER['AWS_ENV'] == 'production');
+
 return array(
 
 	/*
@@ -26,7 +28,7 @@ return array(
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => $isProd ? 'mysql' : 'sqlite',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,10 +56,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => getenv('DB_HOST') ?: 'localhost',
-			'database'  => getenv('DB_DATABASE') ?: 'database',
-			'username'  => getenv('DB_USERNAME') ?: 'root',
-			'password'  => getenv('DB_PASSWORD') ?: '',
+			'host'      => $isProd ? $_SERVER['RDS_HOSTNAME'] : '',
+			'database'  => $isProd ? $_SERVER['RDS_DB_NAME'] : '',
+			'username'  => $isProd ? $_SERVER['RDS_USERNAME'] : '',
+			'password'  => $isProd ? $_SERVER['RDS_PASSWORD'] : '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
