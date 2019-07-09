@@ -28,6 +28,9 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_DATABASE_URI = 'pymysql://%s:%s@%s:%s/%s' % (
             os.getenv('MYSQL_USER', 'notejam'),
             os.getenv('MYSQL_PWD', ''),

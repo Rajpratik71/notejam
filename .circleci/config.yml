@@ -76,3 +76,69 @@ workflows:
           family: 'nodejam'
           cluster-name: 'default-cluster'
           container-image-name-updates: 'container=nodejam,image-and-tag=${ECR_ACCOUNT_URL}/${AWS_ECR_REPOSITORY}:v-${CIRCLE_SHA1}'
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:2
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps2-{{ .Branch }}-{{ checksum "flask/requirements.txt" }}
+      - run:
+          command: |
+            cd flask
+            virtualenv .env
+            source .env/bin/activate
+            pip install -r requirements.txt
+      - save_cache:
+          key: deps2-{{ .Branch }}-{{ checksum "flask/requirements.txt" }}
+          paths:
+            - 'flask/.env'
+      - save_cache:
+          key: v2-app-cache-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - '.'
+  test:
+    docker:
+      - image: circleci/python:2
+    steps:
+      - restore_cache:
+          key: v2-app-cache-{{ .Branch }}-{{ .Revision }}
+      - run:
+          command: |
+            cd flask
+            source .env/bin/activate
+            python tests.py
+  docker:
+    docker:
+        - image: mie00/gke-kubeconfig
+    working_directory: /home/circleci/project
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - restore_cache:
+          keys:
+            - v2-app-cache-{{ .Branch }}-{{ .Revision }}
+      - run: docker build --rm=false --tag=eu.gcr.io/${GCP_PROJECT}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM} --tag=eu.gcr.io/${GCP_PROJECT}/${CIRCLE_PROJECT_REPONAME}:latest .
+
+      - run: echo ${GOOGLE_AUTH} > /home/circleci/gcp-key.json
+      - run: cat /home/circleci/gcp-key.json | docker login -u _json_key --password-stdin https://eu.gcr.io
+      - run: docker push eu.gcr.io/${GCP_PROJECT}/${CIRCLE_PROJECT_REPONAME}:latest
+      - run: docker push eu.gcr.io/${GCP_PROJECT}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM}
+      - run: mkdir -p /home/circleci/.kube
+      - run: cat /home/circleci/gcp-key.json | gke-kubeconfig -cluster notejam -location us-central1-a -project ${GCP_PROJECT} > /home/circleci/.kube/config
+      - run: kubectl --kubeconfig=/home/circleci/.kube/config --namespace default set image deployment notejam notejam=eu.gcr.io/${GCP_PROJECT}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM}
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - docker:
+          requires:
+            - test
+
