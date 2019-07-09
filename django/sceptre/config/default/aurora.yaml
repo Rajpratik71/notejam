@@ -1,0 +1,10 @@
+template_path: templates/aurora.yaml
+parameters:
+  DatabaseName: notejam
+  EngineVersion: "5.6"
+  MasterUsername: root
+  MasterUserPassword: !environment_variable SCEPTRE_DB_PASSWORD
+  VpcId: !environment_variable SCEPTRE_VPC_ID
+  SubnetIds: !environment_variable SCEPTRE_SUBNET_IDS
+  VpcSecurityGroupId: !stack_output base::SecurityGroupId
+  DeletionProtection: "false"

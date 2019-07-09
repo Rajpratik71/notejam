@@ -1,0 +1,339 @@
+---
+Description: Launch application servers
+
+Parameters:
+  AppName:
+    Type: String
+    Default: notejam
+    Description: >
+      Application name
+      Must match the folder name the app resides in inside the Git repo
+  AmiId:
+    Type: String
+    Default: "ami-08d658f84a6d84a80"
+    Description: >
+      Id of the base AMI to use
+      Example: ami-08d658f84a6d84a80 (ubuntu-bionic-18.04-amd64-server-20190212.1)
+  InstanceType:
+    Type: String
+    Default: t2.medium
+    Description: >
+      Instance Type to use for application servers
+      Example: t2.medium
+  MinServerCount:
+    Type: String
+    Default: "1"
+    Description: Minimum number of servers to launch
+  MaxServerCount:
+    Type: String
+    Default: "10"
+    Description: Maximum number of servers to launch
+  ScaleUpPercentAdjustment:
+    Type: String
+    Default: "10"
+    Description: Scale up by this amount (percentage of the number of running servers)
+  ScaleUpCpuThreshold:
+    Type: String
+    Default: "70"
+    Description: Scale up when average CPU usage exceeds this percentage for ${ScaleUpEvalCycles} minutes
+  ScaleUpEvalCycles:
+    Type: String
+    Default: "1"
+    Description: Scale up when average CPU usage exceeds ${ScaleUpCpuThreshold} for this many minutes
+  ScaleDownPercentAdjustment:
+    Type: String
+    Default: "10"
+    Description: Scale down by this amount (percentage of the number of running servers)
+  ScaleDownCpuThreshold:
+    Type: String
+    Default: "30"
+    Description: Scale down when average CPU usage exceeds this percentage for ${ScaleDownEvalCycles} minutes
+  ScaleDownEvalCycles:
+    Type: String
+    Default: "10"
+    Description: Scale up when average CPU usage exceeds ${ScaleDownCpuThreshold} for this many minutes
+  SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    ConstraintDescription: must be the name of an existing security group id
+    Description: Id of an existing security group
+  IamInstanceProfile:
+    Type: String
+    Description: Iam Instance Profile to attach to the instances
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+  SubnetIds:
+    Type: CommaDelimitedList
+    ConstraintDescription: must be a comma separated list of existing Subnet Ids
+    Description: >
+      Comma separated list of existing Subnet Ids belonging to the VPC specified above
+      Example: subnet-XXXXXXXX,subnet-XXXXXXXX,subnet-XXXXXXXX
+  HostedZoneName:
+    Type: String
+    Default: disabled
+    Description: >
+      Route53 Hosted Zone name of an existing Route53 Hosted Zone that is resolvable from the Internet
+      If set to something other than "disabled" Route53 records will be configured
+      Do not add a trailing dot
+      Example: mydomain.com
+  DBHost:
+    Type: String
+    Description: Database Host
+  DBName:
+    Type: String
+    Default: notejam
+    Description: Database Name
+  DBUser:
+    Type: String
+    Default: root
+    Description: Database User Name
+  DBPassword:
+    Type: String
+    Description: Database User Password
+  ESEndpoint:
+    Type: String
+    Description: ElasticSearch endpoint to push logs to
+
+Conditions:
+  HostedZoneNameProvided: !Not [ !Equals [ !Ref HostedZoneName, "disabled" ] ]
+
+Resources:
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      KeyName: !Ref KeyName
+      SecurityGroups:
+      - !Ref SecurityGroupId
+      ImageId: !Ref AmiId
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref IamInstanceProfile
+      UserData:
+        "Fn::Base64":
+          !Sub
+            - |
+                #cloud-config
+                write_files:
+                  - content: |
+                      input {
+                        file {
+                          path => ["/var/log/apache2/access.log"]
+                          type => "apache_access"
+                        }
+                        file {
+                          path => ["/var/log/apache2/error.log"]
+                          type => "apache_error"
+                        }
+                        file {
+                          path => ["/var/log/varnish/varnishncsa.log"]
+                          type => "varnish"
+                        }
+                      }
+                      filter {
+                         if [type] in [ "apache" , "apache_access" , "apache-access" ]  {
+                            grok {
+                               match => [
+                               "message" , "%{COMBINEDAPACHELOG}+%{GREEDYDATA:extra_fields}",
+                               "message" , "%{COMMONAPACHELOG}+%{GREEDYDATA:extra_fields}"
+                               ]
+                               overwrite => [ "message" ]
+                            }
+                            mutate {
+                               convert => ["response", "integer"]
+                               convert => ["bytes", "integer"]
+                               convert => ["responsetime", "float"]
+                            }
+                            geoip {
+                               source => "clientip"
+                               target => "geoip"
+                               add_tag => [ "apache-geoip" ]
+                            }
+                            date {
+                               match => [ "timestamp" , "dd/MMM/YYYY:HH:mm:ss Z" ]
+                               remove_field => [ "timestamp" ]
+                            }
+                            useragent {
+                               source => "agent"
+                            }
+                         }
+                         if [type] in ["apache_error","apache-error"] {
+                            grok {
+                               match => ["message", "\[%{WORD:dayname} %{WORD:month} %{DATA:day} %{DATA:hour}:%{DATA:minute}:%{DATA:second} %{YEAR:year}\] \[%{NOTSPACE:loglevel}\] (?:\[client %{IPORHOST:clientip}\] ){0,1}%{GREEDYDATA:message}"]
+                               overwrite => [ "message" ]
+                            }
+                            mutate
+                            {
+                               add_field =>
+                               {
+                                  "time_stamp" => "%{day}/%{month}/%{year}:%{hour}:%{minute}:%{second}"
+                               }
+                            }
+                            date {
+                               match => ["time_stamp", "dd/MMM/YYYY:HH:mm:ss"]
+                               remove_field => [ "time_stamp","day","dayname","month","hour","minute","second","year"]
+                            }
+                         }
+                      }
+                      output {
+                        #stdout { codec => rubydebug }
+                        amazon_es {
+                          hosts => [ "${ESEndpoint}" ]
+                          protocol => "http"
+                          port => "80"
+                          region => "eu-west-1"
+                          index => "logstash-%{+YYYY.MM.dd}"
+                        }
+                      }
+                    path: /etc/logstash/conf.d/logstash.conf
+                  - content: |
+                      export DB_ENGINE="django.db.backends.mysql"
+                      export DB_NAME=${DBName}
+                      export DB_USER=${DBUser}
+                      export DB_PASSWORD=${DBPassword}
+                      export DB_HOST=${DBHost}
+                      export DB_PORT=3306
+                    path: /app/db_connection_variables
+                bootcmd:
+                # Will run at every boot, as soon as possible, before rc.local
+                - echo "No configured bootcmd to run..."
+                runcmd:
+                # Will run only once, around the same time as rc.local
+                - set -xe
+                - echo >> /etc/apache2/envvars
+                - echo ". /app/db_connection_variables" >> /etc/apache2/envvars
+                - systemctl restart apache2
+                - bash /staging/files/wait.sh localhost:80 12
+                - systemctl restart logstash
+                - systemctl restart varnishncsa.service
+                - systemctl restart prometheus-varnish-exporter.service
+                - cfn-signal --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region} 
+                - echo SUCCESS - System is up after $UPTIME seconds
+            - {}
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    CreationPolicy:
+      AutoScalingCreationPolicy:
+        MinSuccessfulInstancesPercent: 100
+      ResourceSignal:
+        Count: 1
+        Timeout: PT15M
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: 'true'
+    Properties:
+      LaunchConfigurationName: !Ref LaunchConfiguration
+      MinSize: !Ref MinServerCount
+      MaxSize: !Ref MaxServerCount
+      VPCZoneIdentifier: !Ref SubnetIds
+      LoadBalancerNames:
+      - !Ref LoadBalancer
+      MetricsCollection:
+        - Granularity: 1Minute
+          Metrics:
+            - GroupMinSize
+            - GroupMaxSize
+            - GroupDesiredCapacity
+            - GroupInServiceInstances
+            - GroupPendingInstances
+            - GroupStandbyInstances
+            - GroupTerminatingInstances
+            - GroupTotalInstances
+      Tags:
+      - Key: Name
+        Value: !Join [ "", [ !Ref AppName, "-app" ] ]
+        PropagateAtLaunch: true
+
+  ScalingPolicyUp:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: PercentChangeInCapacity
+      AutoScalingGroupName: !Ref AutoScalingGroup
+      Cooldown: "60"
+      ScalingAdjustment: !Ref ScaleUpPercentAdjustment
+      MinAdjustmentMagnitude: "1"
+
+  ScalingPolicyDown:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: PercentChangeInCapacity
+      AutoScalingGroupName: !Ref AutoScalingGroup
+      Cooldown: "60"
+      ScalingAdjustment: !Ref ScaleDownPercentAdjustment
+      MinAdjustmentMagnitude: "1"
+      
+  AlarmCpuHigh:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: !Join [ " ", [ "Scale-up if CPU >", !Ref ScaleUpCpuThreshold, "%", !Ref ScaleUpEvalCycles, "minutes" ] ]
+      AlarmActions:
+        - !Ref ScalingPolicyUp
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: "60"
+      EvaluationPeriods: !Ref ScaleUpEvalCycles
+      Threshold: !Ref ScaleUpCpuThreshold
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref AutoScalingGroup
+      ComparisonOperator: GreaterThanThreshold
+
+  AlarmCpuLow:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: !Join [ " ", [ "Scale-down if CPU >", !Ref ScaleDownCpuThreshold, "%", !Ref ScaleDownEvalCycles, "minutes" ] ]
+      AlarmActions:
+        - !Ref ScalingPolicyDown
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: "60"
+      EvaluationPeriods: !Ref ScaleDownEvalCycles
+      Threshold: !Ref ScaleDownCpuThreshold
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref AutoScalingGroup
+      ComparisonOperator: LessThanThreshold
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      Subnets: !Ref SubnetIds
+      CrossZone: true
+      ConnectionDrainingPolicy:
+        Enabled: true
+        Timeout: 10
+      SecurityGroups:
+      - !Ref SecurityGroupId
+      Listeners:
+      - LoadBalancerPort: "80"
+        InstancePort: "80"
+        Protocol: HTTP
+        #- LoadBalancerPort: "443"
+        #  InstancePort: "80"
+        #  Protocol: HTTPS
+        #  SSLCertificateId: !Ref "SSLCertificate"
+      HealthCheck:
+        Target: "HTTP:80/signin/?next=/"
+        HealthyThreshold: "3"
+        UnhealthyThreshold: "3"
+        Interval: "10"
+        Timeout: "5"
+
+  Route53RecordSet:
+    Condition: HostedZoneNameProvided
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Join [ "", [ !Ref HostedZoneName, "." ] ]
+      Comment: Pretty DNS Record
+      Name: !Join [ "", [ !Ref AppName, ".", !Ref HostedZoneName, "." ] ]
+      Type: CNAME
+      TTL: "600"
+      ResourceRecords:
+      - !GetAtt LoadBalancer.DNSName
+
+Outputs:
+  APPRoute53RecordSet:
+    Condition: HostedZoneNameProvided
+    Value: !Ref Route53RecordSet

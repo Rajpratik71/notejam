@@ -1,0 +1,10 @@
+template_path: templates/prom.yaml
+parameters:
+  AppName: notejam
+  AmiId: ami-08d658f84a6d84a80
+  InstanceType: t2.medium
+  SecurityGroupId: !stack_output base::SecurityGroupId
+  IamInstanceProfile: !stack_output base::PROMIamInstanceProfile
+  KeyName: !environment_variable SCEPTRE_KEY_NAME
+  SubnetIds: !environment_variable SCEPTRE_SUBNET_IDS
+  HostedZoneName: !environment_variable SCEPTRE_HOSTED_ZONE_NAME

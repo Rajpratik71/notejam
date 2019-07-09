@@ -1,0 +1,194 @@
+---
+Description: Launch base resources
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    ConstraintDescription: must be the id of an existing VPC
+    Description: Id of an existing VPC
+  ApplicationAccessFrom:
+    Type: String
+    Default: 0.0.0.0/0
+    Description: >
+      Cidr Block from which to allow access to the application
+      Restrict this if you don't want the application to be public
+      Example: 0.0.0.0/0
+  ManagementAccessFrom:
+    Type: String
+    Description: >
+      Cidr Block from which to allow management access to the enviroment
+      Example: 10.1.2.3/32
+
+Resources:
+  CIIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: ec2-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - ec2:*
+            Effect: Allow
+            Resource:
+            - "*"
+      - PolicyName: asg-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - autoscaling:*
+            Effect: Allow
+            Resource:
+            - "*"
+      - PolicyName: elb-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - elasticloadbalancing:*
+            Effect: Allow
+            Resource:
+            - "*"
+      - PolicyName: cloudwatch-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - cloudwatch:*
+            Effect: Allow
+            Resource:
+            - "*"
+      - PolicyName: cloudformation-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - cloudformation:*
+            Effect: Allow
+            Resource:
+            - "*"
+      - PolicyName: iam-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - iam:PassRole
+            Effect: Allow
+            Resource:
+            - "*"
+      - PolicyName: route53-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - route53:*
+            Effect: Allow
+            Resource:
+            - "*"
+
+  CIInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref CIIamRole
+
+  APPIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: es-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - es:Describe*
+            - es:List*
+            - es:ESHttpPut
+            - es:ESHttpPost
+            - es:ESHttpGet
+            Effect: Allow
+            Resource:
+            - "*"
+
+  APPInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref APPIamRole
+
+  PROMIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: ec2-access
+        PolicyDocument:
+          Statement:
+          - Action:
+            - ec2:DescribeInstances
+            Effect: Allow
+            Resource:
+            - "*"
+
+  PROMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref PROMIamRole
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Environment Security Group
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: !Ref ApplicationAccessFrom
+      - IpProtocol: tcp
+        FromPort: '0'
+        ToPort: '65535'
+        CidrIp: !Ref ManagementAccessFrom
+
+  SecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      IpProtocol: tcp
+      FromPort: '0'
+      ToPort: '65535'
+      SourceSecurityGroupId: !Ref SecurityGroup
+
+Outputs:
+  SecurityGroupId:
+    Value: !GetAtt SecurityGroup.GroupId
+  CIIamInstanceProfile:
+    Value: !Ref CIInstanceProfile
+  APPIamInstanceProfile:
+    Value: !Ref APPInstanceProfile
+  PROMIamInstanceProfile:
+    Value: !Ref PROMInstanceProfile

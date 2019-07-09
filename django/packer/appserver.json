@@ -1,0 +1,110 @@
+{
+    "variables": {
+        "source_ami": "",
+        "subnet_id": "",
+        "app_name": "",
+        "commit": ""
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "region": "eu-west-1",
+            "source_ami": "{{user `source_ami`}}",
+            "instance_type": "t2.xlarge",
+            "ssh_username": "ubuntu",
+            "subnet_id": "{{user `subnet_id`}}",
+            "ami_block_device_mappings": [
+                {
+                    "device_name": "/dev/sda1",
+                    "volume_type": "standard",
+                    "volume_size": "12",
+                    "delete_on_termination": true
+                }
+            ],
+            "launch_block_device_mappings": [
+                {
+                    "device_name": "/dev/sda1",
+                    "volume_type": "standard",
+                    "volume_size": "12",
+                    "delete_on_termination": true
+                }
+            ],
+            "ami_name": "{{user `app_name`}}-app-{{user `commit`}}-{{timestamp}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
+            ]
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo mkdir -p /app/{{user `app_name`}} /staging",
+                "sudo chown ubuntu:ubuntu /app/{{user `app_name`}} /staging"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "files",
+            "destination": "/staging"
+        },
+        {
+            "type": "file",
+            "source": "../{{user `app_name`}}/",
+            "destination": "/app/{{user `app_name`}}"
+        },
+        {
+            "type": "shell",
+            "execute_command": "sudo bash -cxe '{{ .Vars }} {{ .Path }}'",
+            "inline": [
+                "set -x",
+                "echo Updating apt and installing packages... >/dev/null",
+                "export DEBIAN_FRONTEND=noninteractive",
+                "apt-get update -q >/dev/null",
+                "apt-get install -q -y apache2 libapache2-mod-wsgi default-libmysqlclient-dev varnish python python-pip prometheus-node-exporter prometheus-apache-exporter openjdk-8-jre ntp atop iotop htop sysstat >/dev/null",
+
+                "echo Installing Cfn Helper Scripts... >/dev/null",
+                "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz",
+
+                "echo Configuring Apache... >/dev/null",
+                "cp /staging/files/notejam.vhost /etc/apache2/sites-available/000-default.conf",
+                "sed -i 's|^Listen 80$|Listen 8080|' /etc/apache2/ports.conf",
+                "systemctl restart apache2",
+
+                "echo Configuring Varnish... >/dev/null",
+                "sed -i 's|-a :6081|-a :80|' /etc/default/varnish",
+                "sed -i 's|-a :6081|-a :80|' /lib/systemd/system/varnish.service",
+                "systemctl daemon-reload",
+                "systemctl restart varnish",
+
+                "echo Wating for app to be up... >/dev/null",
+                "bash /staging/files/wait.sh localhost:80",
+
+                "echo Installing Prometheus Varnish Exporter... >/dev/null",
+                "cd /staging",
+                "wget -q https://github.com/jonnenauha/prometheus_varnish_exporter/releases/download/1.4.1/prometheus_varnish_exporter-1.4.1.linux-amd64.tar.gz",
+                "tar -xf prometheus_varnish_exporter-*.tar.gz",
+                "rm prometheus_varnish_exporter-*.tar.gz",
+                "mv prometheus_varnish_exporter-*/prometheus_varnish_exporter /usr/local/bin/prometheus_varnish_exporter",
+                "chmod +x /usr/local/bin/prometheus_varnish_exporter",
+                "cp /staging/files/prometheus-varnish-exporter.service /etc/systemd/system",
+                "cd -",
+
+                "echo Installing Filebeat and Logstash... >/dev/null",
+                "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -",
+                "echo \"deb https://artifacts.elastic.co/packages/5.x/apt stable main\" | tee -a /etc/apt/sources.list.d/elastic-5.x.list",
+                "apt-get update -q >/dev/null && apt-get install -q -y filebeat=5.3.0 metricbeat=5.4.1 logstash=1:5.3.0-1 >/dev/null",
+
+                "echo Installing Amazon ES Logstash output plugin... >/dev/null",
+                "/usr/share/logstash/bin/logstash-plugin install /staging/files/logstash-output-amazon_es-2.0.0.gem",
+
+                "echo Adding Logstash to the \"adm\" and \"varnish\" groups so it will be allowed to read logs...",
+                "usermod -a -G adm logstash",
+                "usermod -a -G varnish logstash"
+            ]
+        }
+    ]
+}

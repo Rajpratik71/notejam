@@ -1,0 +1,235 @@
+---
+Description: Launch CI
+
+Parameters:
+  AppName:
+    Type: String
+    Default: notejam
+    Description: >
+      Application name
+      Must match the folder name the app resides in inside the Git repo
+  AmiId:
+    Type: String
+    Default: ami-08d658f84a6d84a80
+    Description: >
+      Id of the base AMI to use
+      Example: ami-08d658f84a6d84a80 (ubuntu-bionic-18.04-amd64-server-20190212.1)
+  InstanceType:
+    Type: String
+    Default: t2.medium
+    Description: >
+      Instance Type to use for Management/CI Instance
+      Example: t2.medium
+  SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    ConstraintDescription: must be the name of an existing security group id
+    Description: Id of an existing security group
+  IamInstanceProfile:
+    Type: String
+    Description: Iam Instance Profile to attach to the instance
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+  SubnetIds:
+    Type: CommaDelimitedList
+    ConstraintDescription: must be a comma separated list of existing Subnet Ids
+    Description: >
+      Comma separated list of existing Subnet Ids 
+      Example: subnet-XXXXXXXX,subnet-XXXXXXXX,subnet-XXXXXXXX
+  HostedZoneName:
+    Type: String
+    Default: disabled
+    Description: >
+      Route53 Hosted Zone name of an existing Route53 Hosted Zone that is resolvable from the Internet
+      If set to something other than "disabled" Route53 records will be configured
+      Do not add a trailing dot
+      Example: mydomain.com
+  DBHost:
+    Type: String
+    Description: Database Host
+  DBName:
+    Type: String
+    Default: notejam
+    Description: Database Name
+  DBUser:
+    Type: String
+    Default: root
+    Description: Database User Name
+  DBPassword:
+    Type: String
+    Description: Database User Password
+
+Conditions:
+  HostedZoneNameProvided: !Not [ !Equals [ !Ref HostedZoneName, "disabled" ] ]
+
+Resources:
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      SubnetId: !Select [ 0, !Ref SubnetIds ]
+      SecurityGroupIds:
+      - !Ref SecurityGroupId
+      IamInstanceProfile: !Ref IamInstanceProfile
+      ImageId: !Ref AmiId
+      InstanceType: !Ref InstanceType
+      Monitoring: true
+      Tags:
+      - Key: Name
+        Value: !Join [ "", [ !Ref AppName, "-ci" ] ]
+      UserData:
+        "Fn::Base64":
+          !Sub
+            - |
+                #cloud-config
+                write_files:
+                  - content: |
+                      #!/bin/sh -xe
+
+                      test -f /staging/packer.zip || wget https://releases.hashicorp.com/packer/1.4.0/packer_1.4.0_linux_amd64.zip -O /staging/packer.zip
+                      test -x /usr/local/bin/packer || { cd /usr/local/bin && unzip /staging/packer.zip && chmod +x packer; }
+                    path: /staging/configure_packer.sh
+                  - content: |
+                      #!/bin/sh -xe
+                      
+                      echo "$0 - Adding sources..." >/dev/null
+                      wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+                      echo 'deb https://pkg.jenkins.io/debian-stable binary/' >/etc/apt/sources.list.d/jenkins.list 
+                      apt-get update -q >/dev/null
+                      
+                      echo "$0 - Install Jenkins with hack so that the service will not start before we get a chance to set -Djenkins.install.runSetupWizard=false..." >/dev/null
+                      ln -s /dev/null /etc/systemd/system/jenkins.service
+                      apt-get install -yq jenkins=2.164.2 >/dev/null
+                      sed -i 's|^JAVA_ARGS="\(.*\)"|JAVA_ARGS="\1 -Djenkins.install.runSetupWizard=false"|' /etc/default/jenkins
+                      rm /etc/systemd/system/jenkins.service
+                      /etc/init.d/jenkins start
+                      
+                      echo "$0 - Waiting for Jenkins Cli to be available..." >/dev/null
+                      timeout 30 sh -c 'until curl -m 5 -s --fail --location localhost:8080/cli?remoting=false >/dev/null; do sleep 1; done'
+                      
+                      echo "$0 - Installing required plugins..." >/dev/null
+                      sleep 15 # TODO - find a way to remove this
+                      java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ install-plugin configuration-as-code:1.5
+                      java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ install-plugin configuration-as-code-support:1.5
+                      java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ install-plugin job-dsl:1.73
+                      java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ install-plugin github:1.29.4
+                    path: /staging/configure_jenkins.sh
+                  - content: |
+                      jenkins:
+                        systemMessage: "Welcome to the Jenkins Configuration as Code plugin!"
+                      tool:
+                        git:
+                          installations:
+                            - name: Default
+                              home: "git"
+                      jobs:
+                        - script: >
+                            job('notejam') {
+                                logRotator(-1, 10)
+                                jdk('Java 6')
+                                scm {
+                                    github('asandulescu/notejam', 'master')
+                                }
+                                triggers {
+                                    scm('H/5 * * * *')
+                                }
+                                steps {
+                                    shell('''#!/bin/bash
+                                             set -xe
+                                             
+                                             cd django/notejam
+                                             
+                                             virtualenv notejamenv >/dev/null
+                                             source notejamenv/bin/activate >/dev/null
+                                             pip install -r ../requirements.txt
+                                             pip install mysqlclient==1.3.14
+
+                                             source /staging/db_connection_variables
+                                             ./manage.py syncdb --noinput
+                                             ./manage.py migrate
+                                             ./manage.py test
+                                             
+                                             cd ../packer
+                                             packer build -var "source_ami=${AmiId}" \
+                                                          -var "app_name=${AppName}" \
+                                                          -var "subnet_id=${FirstSubnetId}" \
+                                                          -var "commit=$(git rev-parse --short HEAD)" \
+                                                          appserver.json | tee /tmp/jenkins_packer_output
+                                             artifact=$(cat /tmp/jenkins_packer_output | grep -E 'ami-[0-9a-z]{17}' | tail -n1 | awk '{print $2}')
+                                             
+                                             cd ../sceptre
+                                             pip install sceptre==1.3.4
+                                             source /staging/sceptre_env_variables
+                                             export SCEPTRE_APP_SERVER_AMI_ID="$artifact"
+                                             sceptre launch-stack default app
+                                             sceptre describe-stack-outputs default app
+                                             ''')
+                                }
+                            }
+                    path: /staging/jenkins.yaml
+                  - content: |
+                      export SCEPTRE_KEY_NAME=${KeyName}
+                      export SCEPTRE_SUBNET_IDS=${JoinedSubnetIds}
+                      export SCEPTRE_HOSTED_ZONE_NAME=${HostedZoneName}
+                      export SCEPTRE_DB_PASSWORD=${DBPassword}
+                    path: /staging/sceptre_env_variables
+                  - content: |
+                      export DB_ENGINE="django.db.backends.mysql"
+                      export DB_NAME=${DBName}
+                      export DB_USER=${DBUser}
+                      export DB_PASSWORD=${DBPassword}
+                      export DB_HOST=${DBHost}
+                      export DB_PORT=3306
+                    path: /staging/db_connection_variables
+                packages:
+                - unzip
+                - python
+                - python-pip
+                - python-mysqldb
+                - default-libmysqlclient-dev
+                - virtualenv
+                - openjdk-8-jre
+                bootcmd:
+                # Will run at every boot, as soon as possible, before rc.local
+                - echo "No configured bootcmd to run..."
+                runcmd:
+                # Will run only once, around the same time as rc.local
+                - set -xe
+                - bash -xe /staging/configure_packer.sh
+                - bash -xe /staging/configure_jenkins.sh
+                - cp /staging/jenkins.yaml /var/lib/jenkins/
+                - systemctl restart jenkins
+                - echo SUCCESS - System is up, CI configuration finished after $UPTIME seconds
+                final_message: |
+                  Use Ctrl + c to exit
+            - { FirstSubnetId: !Select [ 0, !Ref SubnetIds ], JoinedSubnetIds: !Join [ ",", !Ref SubnetIds ] }
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref Instance
+
+  Route53RecordSet:
+    Condition: HostedZoneNameProvided
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Join [ "", [ !Ref HostedZoneName, "." ] ]
+      Comment: Pretty DNS Record
+      Name: !Join [ "", [ !Ref AppName, "-ci.", !Ref HostedZoneName, "." ] ]
+      Type: A
+      TTL: '600'
+      ResourceRecords:
+      - !Ref EIP
+
+Outputs:
+  CIInstanceId:
+    Value: !Ref Instance
+  CIPublicIp:
+    Value: !GetAtt Instance.PublicIp
+  CIInstancePublicDnsName:
+    Value: !GetAtt Instance.PublicDnsName
+  CIRoute53RecordSet:
+    Condition: HostedZoneNameProvided
+    Value: !Ref Route53RecordSet

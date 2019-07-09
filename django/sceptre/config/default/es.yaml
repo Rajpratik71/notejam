@@ -1,0 +1,8 @@
+template_path: templates/es.yaml
+parameters:
+  AppName: notejam
+  HostedZoneName: !environment_variable SCEPTRE_HOSTED_ZONE_NAME
+  ManagementAccessFrom: !environment_variable SCEPTRE_MANAGEMENT_ACCESS_FROM
+  InstanceCount: "1"
+  InstanceType: m3.medium.elasticsearch
+  VolumeSize: "100"

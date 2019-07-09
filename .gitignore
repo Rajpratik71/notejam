@@ -61,3 +61,6 @@ app.log
 
 # Terraform
 *.tfstate*
+
+# Bootstrap env vars
+bootstrapenv
