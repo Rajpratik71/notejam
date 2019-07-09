@@ -6,7 +6,9 @@
     "start:dev": "NODE_ENV=development DEBUG=* node ./bin/www",
     "start:prod": "NODE_ENV=prod node ./bin/www",
     "test:unit": "NODE_ENV=local node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/unit",
-    "test:sit": "NODE_ENV=prod node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/sit"
+    "test:sit": "NODE_ENV=prod node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/sit",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "async": "*",
@@ -36,6 +38,8 @@
     "static-favicon": "~1.0.0",
     "superagent": "*",
     "supertest": "0.*.*",
-    "winston": "2.4.4"
-  }
+    "winston": "2.4.4",
+    "snyk": "^1.192.3"
+  },
+  "snyk": true
 }
