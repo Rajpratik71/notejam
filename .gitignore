@@ -58,3 +58,6 @@ bower_components
 
 app.log
 .env
+
+# Terraform
+*.tfstate*
