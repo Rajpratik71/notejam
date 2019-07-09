@@ -1,10 +1,8 @@
 ***************
-Notejam: Django
+Premissas
 ***************
+.. code-block:: bash
 
-Notejam application implemented using `Django <https://www.djangoproject.com/>`_ framework.
-
-Django version: 1.6
 
 ==========================
 Installation and launching
