@@ -1,0 +1,30 @@
+CREATE DATABASE notejam;
+
+USE notejam;
+
+CREATE TABLE user (
+	id INTEGER AUTO_INCREMENT, 
+	email VARCHAR(120), 
+	password VARCHAR(100), 
+	PRIMARY KEY (id), 
+	UNIQUE (email)
+);
+CREATE TABLE pad (
+	id INTEGER AUTO_INCREMENT, 
+	name VARCHAR(100), 
+	user_id INTEGER, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(user_id) REFERENCES user (id)
+);
+CREATE TABLE note (
+	id INTEGER AUTO_INCREMENT, 
+	name VARCHAR(100), 
+	text TEXT, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	user_id INTEGER, 
+	pad_id INTEGER, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(user_id) REFERENCES user (id), 
+	FOREIGN KEY(pad_id) REFERENCES pad (id)
+);

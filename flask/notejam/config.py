@@ -1,6 +1,16 @@
 import os
 import urllib
+import pymysql
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Terraform will handle provisioning this. More flexible.
+
+notejam_user = os.environ['db_username']
+notejam_password = os.environ['db_password']
+database_endpoint = os.environ['db_url']
+port = os.environ['db_port']
+db_name = os.environ['db_name']
 
 class Config(object):
     DEBUG = False
@@ -14,8 +24,6 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
     SQLALCHEMY_DATABASE_URI = '__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + os.environ.get("RDS_USERNAME") + ':' + os.environ.get("RDS_PASSWORD") + "@" + os.environ.get("RDS_ENDPOINT") + '/notejam'
-
-
 
 class ProductionConfig(Config):
     DEBUG = False
