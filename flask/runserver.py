@@ -1,15 +1,18 @@
 import os
 from notejam import app
+from notejam.config import DevelopmentConfig, TestingConfig, ProductionConfig, DevelopmentLocalConfig
 
-host = '127.0.0.1'
-config = 'notejam.config.DevelopmentConfig'
-env_config = os.environ.get("APP_SETTINGS")
-if env_config:
-    config = env_config
-    host = '0.0.0.0'
+if os.getenv('ENV') == 'DEV':
+    app.config.from_object(DevelopmentConfig)
+elif os.getenv('ENV') == 'TST':
+    app.config.from_object(TestingConfig)
+elif os.getenv('ENV') == 'PRD':
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentLocalConfig)
 
 app.config.from_object(config)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', debug=True)

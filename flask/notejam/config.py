@@ -38,6 +38,10 @@ class ProductionConfig(Config):
             os.getenv('MYSQL_SERVICE_PORT_MYSQL', '3306'),
             os.getenv('MYSQL_DB', 'notejam'))
 
+class DevelopmentLocalConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'notejam.db')
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
@@ -46,5 +50,6 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'notejam.db')
