@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: notejam-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.org/rewrites: "serviceName=grafana rewrite=/;serviceName=kibana rewrite=/;"
+spec:
+  backend:
+    serviceName: default-backend
+    servicePort: 80
+  rules:
+  - host: notejam.jam
+    http:
+      paths:
+       - backend:
+            serviceName: grafana
+            servicePort: 3000
+         path: /grafana/
+       - backend:
+            serviceName: kibana
+            servicePort: 5601
+         path: /app/kibana/
+       - backend:
+            serviceName: jenkins
+            servicePort: 8080
+         path: /jenkins/
+       - backend:
+           serviceName: notejam-app-service
+           servicePort: 3000

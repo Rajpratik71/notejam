@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: notejam-app
+  labels:
+    app: notejam-app
+    role: backend
+spec:
+  selector:
+    matchLabels: {}
+  endpoints:
+  - port: web
+    interval: 30s
+  - port: notejam-app
+    interval: 30s
