@@ -13,6 +13,8 @@ class Config(object):
     params = urllib.quote_plus('DRIVER={ODBC Driver 13 for SQL Server};SERVER=notejamsql.database.windows.net;DATABASE=notejamdb;UID=notejamadmin;PWD=')
     SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
     SQLALCHEMY_DATABASE_URI = '__SQLALCHEMY_DATABASE_URI_CI_CHANGE_VAR__'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + os.environ.get("RDS_USERNAME") + ':' + os.environ.get("RDS_PASSWORD") + "@" + os.environ.get("RDS_ENDPOINT") + '/notejam'
+
 
 
 class ProductionConfig(Config):
