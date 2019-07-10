@@ -6,3 +6,11 @@ patch:
   SNYK-JS-LODASH-450202:
     - async > lodash:
         patched: '2019-07-08T02:23:43.868Z'
+  'npm:mime:20170907':
+    - express > accepts > mime:
+        patched: '2019-07-10T08:38:00.416Z'
+  'npm:uglify-js:20151024':
+    - jade > constantinople > uglify-js:
+        patched: '2019-07-10T08:38:00.416Z'
+    - jade > transformers > uglify-js:
+        patched: '2019-07-10T08:38:00.416Z'
