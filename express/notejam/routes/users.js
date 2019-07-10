@@ -21,7 +21,7 @@ router.post('/signup', function(req, res) {
   var data = req.body;
   if (data['password']) {
     data['password'] = generateHash(data['password']);
-  };
+  }
   req.models.User.create(data, function(err, message) {
     debug('Message is ' + message);
     debug('Create Error is ' + err);
