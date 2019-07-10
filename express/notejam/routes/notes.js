@@ -60,7 +60,7 @@ router.use('/notes/:id', function(req, res, next) {
         if (note == null) {
           res.send(404);
           return;
-        };
+        }
         req.note = note;
         next();
       });

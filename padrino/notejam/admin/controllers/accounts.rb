@@ -30,7 +30,7 @@ Notejam::Admin.controllers :accounts do
     if @account
       render 'accounts/edit'
     else
-      flash[:warning] = pat(:create_error, :model => 'account', :id => "#{params[:id]}")
+      flash[:warning] = pat(:create_error, :model => 'account', :id => (params[:id]).to_s)
       halt 404
     end
   end
@@ -40,7 +40,7 @@ Notejam::Admin.controllers :accounts do
     @account = Account.get(params[:id])
     if @account
       if @account.update(params[:account])
-        flash[:success] = pat(:update_success, :model => 'Account', :id =>  "#{params[:id]}")
+        flash[:success] = pat(:update_success, :model => 'Account', :id =>  (params[:id]).to_s)
         params[:save_and_continue] ?
           redirect(url(:accounts, :index)) :
           redirect(url(:accounts, :edit, :id => @account.id))
@@ -49,7 +49,7 @@ Notejam::Admin.controllers :accounts do
         render 'accounts/edit'
       end
     else
-      flash[:warning] = pat(:update_warning, :model => 'account', :id => "#{params[:id]}")
+      flash[:warning] = pat(:update_warning, :model => 'account', :id => (params[:id]).to_s)
       halt 404
     end
   end
@@ -59,13 +59,13 @@ Notejam::Admin.controllers :accounts do
     account = Account.get(params[:id])
     if account
       if account != current_account && account.destroy
-        flash[:success] = pat(:delete_success, :model => 'Account', :id => "#{params[:id]}")
+        flash[:success] = pat(:delete_success, :model => 'Account', :id => (params[:id]).to_s)
       else
         flash[:error] = pat(:delete_error, :model => 'account')
       end
       redirect url(:accounts, :index)
     else
-      flash[:warning] = pat(:delete_warning, :model => 'account', :id => "#{params[:id]}")
+      flash[:warning] = pat(:delete_warning, :model => 'account', :id => (params[:id]).to_s)
       halt 404
     end
   end
@@ -83,7 +83,7 @@ Notejam::Admin.controllers :accounts do
       flash[:error] = pat(:delete_error, :model => 'account')
     elsif accounts.destroy
 
-      flash[:success] = pat(:destroy_many_success, :model => 'Accounts', :ids => "#{ids.to_sentence}")
+      flash[:success] = pat(:destroy_many_success, :model => 'Accounts', :ids => (ids.to_sentence).to_s)
     end
     redirect url(:accounts, :index)
   end

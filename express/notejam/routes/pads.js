@@ -39,7 +39,7 @@ router.use('/pads/:id', function(req, res, next) {
         if (pad == null) {
           res.send(404);
           return;
-        };
+        }
         req.pad = pad;
         next();
       });
