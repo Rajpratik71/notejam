@@ -64,3 +64,11 @@ app.log
 
 # Bootstrap env vars
 bootstrapenv
+
+venv/
+.idea/
+
+# Serverless
+/**/.serverless/
+/**/node_modules/
+/**/package-lock.json

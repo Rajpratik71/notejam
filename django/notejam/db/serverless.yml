@@ -1,0 +1,109 @@
+service: notejam-database-service
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: "${opt:stage, 'dev'}"
+  region: "eu-west-1"
+  stackTags:
+    Project: "notejam"
+
+custom:
+  VpcId:
+    Fn::ImportValue: "notejam-VPC-${self:provider.stage}"
+
+resources:
+  Conditions:
+    DevStageCondition:
+      Fn::Equals:
+        - "dev"
+        - "${self:provider.stage}"
+
+  Resources:
+    RDSAccessGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: A resource (e.g. Lambda) must belong to this group if it want access to the RDS.
+        SecurityGroupIngress:
+          - CidrIp: 0.0.0.0/0
+            Description: Allow traffic from all sources.
+            IpProtocol: tcp
+            FromPort: 0
+            ToPort: 65535
+        SecurityGroupEgress:
+          - CidrIp: 0.0.0.0/0
+            Description: Allow traffic to all sources.
+            IpProtocol: tcp
+            FromPort: 0
+            ToPort: 65535
+        Tags:
+          - Key: Name
+            Value: RDS Access
+        VpcId: "${self:custom.VpcId}"
+
+    RDSSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: The RDS belongs to this security group.
+        SecurityGroupIngress:
+          - Description: Allow only traffic from resources that belong to RDSAccess group.
+            SourceSecurityGroupId:
+              Ref: RDSAccessGroup
+            IpProtocol: tcp
+            FromPort: 3306
+            ToPort: 3306
+        Tags:
+          - Key: Name
+            Value: RDS
+        VpcId: "${self:custom.VpcId}"
+
+    # ------------ AURORA STUFF -----------------
+    AuroraServerless:
+      Type: AWS::RDS::DBCluster
+      Properties:
+        MasterUsername: root
+        MasterUserPassword: sdfh834rn3443FSDFfff
+        DatabaseName: notejam
+        Engine: aurora
+        EngineMode: serverless
+        ScalingConfiguration:
+          AutoPause: true
+          MaxCapacity: 2
+          MinCapacity: 2
+          SecondsUntilAutoPause: 300
+        DBSubnetGroupName:
+          Ref: AuroraServerlessSubnetGroup
+        VpcSecurityGroupIds:
+          - Ref: RDSSecurityGroup
+
+    AuroraServerlessSubnetGroup:
+      Type: AWS::RDS::DBSubnetGroup
+      Properties:
+        DBSubnetGroupDescription: This group consists of three subnets spread over three AZ
+        SubnetIds:
+          Fn::Split:
+            - ','
+            - Fn::ImportValue: "notejam-Private-Subnets-${self:provider.stage}"
+        Tags:
+          - Key: Name
+            Value: "notejam Aurora"
+
+  Outputs:
+    AuroraId:
+      Description: A reference to the Aurora Serverless.
+      Value:
+        Ref: AuroraServerless
+
+    AuroraCluster:
+      Description: The hostname of the Aurora Serverless Cluster.
+      Value:
+        Fn::GetAtt: [AuroraServerless, Endpoint.Address]
+      Export:
+        Name: "notejam-HostName-${self:provider.stage}"
+
+    AuroraAccessGroup:
+      Description: The accessgroup of the Aurora Serverless Cluster.
+      Value:
+        Ref: RDSAccessGroup
+      Export:
+        Name: "notejam-RDSAccessGroup-${self:provider.stage}"

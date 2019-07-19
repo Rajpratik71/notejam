@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
 from notes.views import (NoteCreateView, NoteDeleteView,
@@ -9,7 +9,7 @@ NoteDetailView, NoteUpdateView)
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('notes.views',
+urlpatterns = [
     url(r'^create/$', login_required(NoteCreateView.as_view()),
         name='create_note'),
     url(r'^(?P<pk>\d+)/$', login_required(NoteDetailView.as_view()),
@@ -17,5 +17,5 @@ urlpatterns = patterns('notes.views',
     url(r'^(?P<pk>\d+)/edit/$', login_required(NoteUpdateView.as_view()),
         name='edit_note'),
     url(r'^(?P<pk>\d+)/delete/$', login_required(NoteDeleteView.as_view()),
-        name='delete_note'),
-)
+        name='delete_note')
+]

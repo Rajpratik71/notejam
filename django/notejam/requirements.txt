@@ -1,0 +1,7 @@
+Django==1.11.20
+djangorestframework
+whitenoise
+boto3
+werkzeug
+mysqlclient==1.3.12
+pygments

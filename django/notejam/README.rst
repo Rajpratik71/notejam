@@ -1,8 +1,10 @@
-***************
-Premissas
-***************
-.. code-block:: bash
+# encoding=utf8
 
+***************
+Notejam: Django
+***************
+
+Notejam application implemented using `Django <https://www.djangoproject.com/>`_ framework.
 
 Django version: 1.11.20
 
@@ -56,24 +58,33 @@ Go to http://127.0.0.1:8000/ in your browser.
 ---------------
 Launch in cloud
 ---------------
---------------------
-1. Create VPC in AWS
---------------------
+-------------------
+1. Setup VPC in AWS
+-------------------
 .. code-block:: bash
 
     $ cd YOUR_PROJECT_DIR/django/notejam/vpc
     $ sls deploy
 
--------------------------
-2. Create Database in AWS
--------------------------
+------------------------
+2. Setup Database in AWS
+------------------------
 .. code-block:: bash
 
     $ cd YOUR_PROJECT_DIR/django/notejam/db
     $ sls deploy
 
+----------------------------
+3. Provision Database in AWS
+----------------------------
+.. code-block:: bash
+
+    $ cd YOUR_PROJECT_DIR/django/notejam/
+    #TODO: This can not connect to database, Why?
+    $ python manage.py create_db
+
 -------------------------------------------------------------------------
-3. Deploy Django app to AWS with help of serverless framework (not Zappa)
+4. Deploy Django app to AWS with help of serverless framework (not Zappa)
 -------------------------------------------------------------------------
 .. code-block:: bash
 
@@ -90,44 +101,3 @@ Run functional and unit tests:
 
     $ cd YOUR_PROJECT_DIR/django/notejam/
     $ ./manage.py test
-
-
-============
-Contribution
-============
-Do you have python/django experience? Help the app to follow python and django best practices.
-
-Please send your pull requests in the ``master`` branch.
-Always prepend your commits with framework name:
-
-.. code-block:: bash
-
-    Django: Implemented sign in functionality
-
-Read `contribution guide <https://github.com/komarserjio/notejam/blob/master/contribute.rst>`_ for details.
-
-
-===========================
-Bootstrap AWS environment
-===========================
-
-------------
-Install Sceptre
-------------
-Install Sceptre version 1.3.4 via Pip
-
-.. code-block:: bash
-    $ pip install sceptre==1.3.4
-
-
---------------------
-Configure environment
---------------------
-Copy bootstrapenv.example to bootstrapenv and configure the environment variables as described in the file
-
-
----------------
-Run bootstrap.sh
----------------
-.. code-block:: bash
-    $ ./bootstrap.sh
