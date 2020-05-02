@@ -5,12 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "serverless-python-requirements": "^4.3.0",
-    "serverless-wsgi": "^1.7.2"
+    "serverless-wsgi": "^1.7.2",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "snyk": true
 }
