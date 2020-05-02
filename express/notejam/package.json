@@ -8,7 +8,7 @@
     "test:unit": "NODE_ENV=local node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/unit",
     "test:sit": "NODE_ENV=prod node db.js ; NODE_ENV=local ./node_modules/mocha/bin/mocha tests/sit",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "yarn run snyk-protect"
   },
   "dependencies": {
     "async": "*",
@@ -39,7 +39,7 @@
     "superagent": "*",
     "supertest": "3.0.0",
     "winston": "2.4.4",
-    "snyk": "^1.192.4"
+    "snyk": "^1.316.1"
   },
   "snyk": true
 }
