@@ -25,7 +25,7 @@ Clone the repo:
 
 .. code-block:: bash
 
-    $ git clone git@github.com:komarserjio/notejam.git YOUR_PROJECT_DIR/
+    $ git clone --depth 1 git@github.com:komarserjio/notejam.git YOUR_PROJECT_DIR/
 
 -------------------
 Install environment
