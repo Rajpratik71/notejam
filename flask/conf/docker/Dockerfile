@@ -16,7 +16,7 @@ RUN apt-get install -y python-pip
 RUN pip install virtualenv
 RUN pip install pymysql
 RUN apt-get install -y git
-RUN git clone https://github.com/therenegadeoffunk/notejam
+RUN git clone --depth 1 https://github.com/therenegadeoffunk/notejam
 
 # Define working directory.
 WORKDIR /notejam/flask
