@@ -16,4 +16,4 @@ patch:
         patched: '2019-07-10T08:38:00.416Z'
   SNYK-JS-LODASH-567746:
     - async > lodash:
-        patched: '2020-04-30T22:43:46.787Z'
+        patched: '2020-05-01T02:50:31.651Z'
