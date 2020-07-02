@@ -17,11 +17,5 @@ patch:
   SNYK-JS-LODASH-567746:
     - async > lodash:
         patched: '2020-05-01T02:50:31.651Z'
-    - express-validator > lodash:
-        patched: '2020-07-02T03:29:35.598Z'
-    - orm > lodash:
-        patched: '2020-07-02T03:29:35.598Z'
-    - orm > async > lodash:
-        patched: '2020-07-02T03:29:35.598Z'
-    - orm > sql-ddl-sync > lodash:
-        patched: '2020-07-02T03:29:35.598Z'
+    - mocha > yargs-unparser > lodash:
+        patched: '2020-07-02T03:31:00.372Z'
