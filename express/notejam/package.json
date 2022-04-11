@@ -11,7 +11,7 @@
     "prepublish": "yarn run snyk-protect"
   },
   "dependencies": {
-    "async": "*",
+    "async": "3.2.2",
     "bcrypt": "5.0.0",
     "body-parser": "~1.18.2",
     "connect-flash": "~0.1.1",
@@ -23,7 +23,7 @@
     "hsts": "~2.1.0",
     "jade": "~1.8.0",
     "mocha": "8.2.0",
-    "moment": "*",
+    "moment": "2.29.2",
     "morgan": "~1.9.1",
     "mysql": "*",
     "nodemailer": "6.4.16",
@@ -38,8 +38,8 @@
     "static-favicon": "~1.0.0",
     "superagent": "*",
     "supertest": "3.0.0",
-    "winston": "2.4.4",
-    "snyk": "^1.425.4"
+    "winston": "3.3.0",
+    "snyk": "^1.465.0"
   },
   "snyk": true
 }
