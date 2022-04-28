@@ -34,7 +34,7 @@
     "shelljs": "^0.8.3",
     "should": "*",
     "should-http": "*",
-    "sqlite3": "*",
+    "sqlite3": "5.0.3",
     "static-favicon": "~1.0.0",
     "superagent": "*",
     "supertest": "3.0.0",
