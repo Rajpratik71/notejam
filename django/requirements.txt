@@ -1,6 +1,6 @@
 Django==1.11.29
 South==1.0
-awscli==1.11.190
+awscli==1.27.90
 MySQL-python
 psycopg2
 
