@@ -1,4 +1,4 @@
-Django==1.11.29
+Django==3.2.21
 South==1.0
 awscli==1.11.190
 MySQL-python
