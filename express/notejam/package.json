@@ -21,7 +21,7 @@
     "express-session": "~1.15.6",
     "express-validator": "~6.0.0",
     "hsts": "~2.1.0",
-    "jade": "~1.8.0",
+    "jade": "~1.11.0",
     "mocha": "8.2.0",
     "moment": "*",
     "morgan": "~1.9.1",
