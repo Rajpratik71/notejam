@@ -21,4 +21,4 @@ pymysql_sa==1.0
 pyodbc==4.0.25
 pymysql==0.9.3
 psycopg2==2.7.4
-setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=70.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
