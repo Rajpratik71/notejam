@@ -1,4 +1,4 @@
-Django==1.11.29
+Django==4.2.15
 djangorestframework
 whitenoise
 boto3
