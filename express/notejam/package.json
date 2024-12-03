@@ -22,7 +22,7 @@
     "express-validator": "~6.0.0",
     "hsts": "~2.1.0",
     "jade": "~1.8.0",
-    "mocha": "8.2.0",
+    "mocha": "11.0.1",
     "moment": "*",
     "morgan": "~1.9.1",
     "mysql": "*",
