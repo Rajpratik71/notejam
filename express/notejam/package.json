@@ -39,7 +39,7 @@
     "superagent": "*",
     "supertest": "3.0.0",
     "winston": "2.4.4",
-    "snyk": "^1.1064.0"
+    "snyk": "^1.1297.3"
   },
   "snyk": true
 }
