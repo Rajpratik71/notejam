@@ -34,10 +34,10 @@
     "shelljs": "^0.8.3",
     "should": "*",
     "should-http": "*",
-    "sqlite3": "*",
+    "sqlite3": "4.2.0",
     "static-favicon": "~1.0.0",
-    "superagent": "*",
-    "supertest": "3.0.0",
+    "superagent": "10.2.2",
+    "supertest": "7.1.3",
     "winston": "2.4.4",
     "snyk": "^1.1064.0"
   },
